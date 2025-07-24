@@ -1,0 +1,3 @@
+[server]
+fileWatcherType       = "poll"          # gentler file-watcher
+folderWatchBlacklist  = ["__pycache__"] # ignore temp .pyc folders
