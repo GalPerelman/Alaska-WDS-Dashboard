@@ -1,0 +1,131 @@
+timestamp,event_type,volume_m3,phase,color,data_type,paired_timestamp
+2024-07-01 13:45:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-02 15:15:00
+2024-07-02 13:15:00,backwash_event_start,6.3563896363109365,Phase 2: Backwash Event,#bf5700,backwash_event,2024-07-02 13:45:00
+2024-07-02 13:45:00,backwash_event_end,6.3563896363109365,Phase 2: Backwash Event,#bf5700,backwash_event,2024-07-02 13:15:00
+2024-07-02 15:15:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-01 13:45:00
+2024-07-06 10:30:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-06 15:00:00
+2024-07-06 14:15:00,backwash_event_start,7.026256346713272,Phase 2: Backwash Event,#bf5700,backwash_event,2024-07-06 14:45:00
+2024-07-06 14:45:00,backwash_event_end,7.026256346713272,Phase 2: Backwash Event,#bf5700,backwash_event,2024-07-06 14:15:00
+2024-07-06 15:00:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-06 10:30:00
+2024-07-10 04:00:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-15 14:45:00
+2024-07-15 14:00:00,backwash_event_start,7.317863971346526,Phase 2: Backwash Event,#bf5700,backwash_event,2024-07-15 14:15:00
+2024-07-15 14:15:00,backwash_event_end,7.317863971346526,Phase 2: Backwash Event,#bf5700,backwash_event,2024-07-15 14:00:00
+2024-07-15 14:45:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-10 04:00:00
+2024-07-15 15:15:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-16 09:15:00
+2024-07-16 08:45:00,backwash_event_start,4.1131968887862005,Phase 2: Backwash Event,#bf5700,backwash_event,2024-07-16 08:45:00
+2024-07-16 08:45:00,backwash_event_end,4.1131968887862005,Phase 2: Backwash Event,#bf5700,backwash_event,2024-07-16 08:45:00
+2024-07-16 09:15:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-15 15:15:00
+2024-07-20 12:30:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-20 18:15:00
+2024-07-20 17:30:00,backwash_event_start,3.8605997881202456,Phase 2: Backwash Event,#bf5700,backwash_event,2024-07-20 18:00:00
+2024-07-20 18:00:00,backwash_event_end,3.8605997881202456,Phase 2: Backwash Event,#bf5700,backwash_event,2024-07-20 17:30:00
+2024-07-20 18:15:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-20 12:30:00
+2024-07-23 16:00:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-24 09:15:00
+2024-07-24 08:30:00,backwash_event_start,10.292879831013513,Phase 2: Backwash Event,#bf5700,backwash_event,2024-07-24 08:45:00
+2024-07-24 08:45:00,backwash_event_end,10.292879831013513,Phase 2: Backwash Event,#bf5700,backwash_event,2024-07-24 08:30:00
+2024-07-24 09:15:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-23 16:00:00
+2024-07-29 08:15:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-29 10:30:00
+2024-07-29 09:45:00,backwash_event_start,9.433525291363646,Phase 2: Backwash Event,#bf5700,backwash_event,2024-07-29 10:15:00
+2024-07-29 10:15:00,backwash_event_end,9.433525291363646,Phase 2: Backwash Event,#bf5700,backwash_event,2024-07-29 09:45:00
+2024-07-29 10:30:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-29 08:15:00
+2024-07-30 01:30:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-30 02:30:00
+2024-07-30 02:30:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-07-30 01:30:00
+2024-08-02 07:30:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-02 10:15:00
+2024-08-02 09:15:00,backwash_event_start,8.251469580867841,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-02 10:00:00
+2024-08-02 10:00:00,backwash_event_end,8.251469580867841,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-02 09:15:00
+2024-08-02 10:15:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-02 07:30:00
+2024-08-04 09:15:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-04 11:30:00
+2024-08-04 10:45:00,backwash_event_start,5.7771746363083825,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-04 11:15:00
+2024-08-04 11:15:00,backwash_event_end,5.7771746363083825,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-04 10:45:00
+2024-08-04 11:30:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-04 09:15:00
+2024-08-06 08:15:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-06 17:15:00
+2024-08-06 16:30:00,backwash_event_start,11.448002483203352,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-06 17:00:00
+2024-08-06 17:00:00,backwash_event_end,11.448002483203352,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-06 16:30:00
+2024-08-06 17:15:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-06 08:15:00
+2024-08-09 09:45:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-09 13:00:00
+2024-08-09 11:45:00,backwash_event_start,6.362835777452601,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-09 12:15:00
+2024-08-09 12:15:00,backwash_event_end,6.362835777452601,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-09 11:45:00
+2024-08-09 13:00:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-09 09:45:00
+2024-08-11 06:00:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-11 07:00:00
+2024-08-11 07:00:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-11 06:00:00
+2024-08-12 20:30:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-13 10:30:00
+2024-08-13 10:00:00,backwash_event_start,8.729683785724742,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-13 10:00:00
+2024-08-13 10:00:00,backwash_event_end,8.729683785724742,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-13 10:00:00
+2024-08-13 10:30:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-12 20:30:00
+2024-08-16 11:00:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-16 14:45:00
+2024-08-16 14:00:00,backwash_event_start,10.702754289020408,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-16 14:30:00
+2024-08-16 14:30:00,backwash_event_end,10.702754289020408,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-16 14:00:00
+2024-08-16 14:45:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-16 11:00:00
+2024-08-18 09:15:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-19 09:30:00
+2024-08-19 08:45:00,backwash_event_start,5.195532017717872,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-19 09:15:00
+2024-08-19 09:15:00,backwash_event_end,5.195532017717872,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-19 08:45:00
+2024-08-19 09:30:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-18 09:15:00
+2024-08-21 13:30:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-22 10:15:00
+2024-08-22 09:15:00,backwash_event_start,6.746852410790634,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-22 09:45:00
+2024-08-22 09:45:00,backwash_event_end,6.746852410790634,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-22 09:15:00
+2024-08-22 10:15:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-21 13:30:00
+2024-08-24 19:45:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-26 10:00:00
+2024-08-26 09:00:00,backwash_event_start,5.416381723935428,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-26 09:45:00
+2024-08-26 09:45:00,backwash_event_end,5.416381723935428,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-26 09:00:00
+2024-08-26 10:00:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-24 19:45:00
+2024-08-30 04:00:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-30 14:15:00
+2024-08-30 13:15:00,backwash_event_start,11.641575785914393,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-30 14:00:00
+2024-08-30 14:00:00,backwash_event_end,11.641575785914393,Phase 2: Backwash Event,#bf5700,backwash_event,2024-08-30 13:15:00
+2024-08-30 14:15:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-08-30 04:00:00
+2024-09-04 01:45:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-05 10:00:00
+2024-09-05 09:00:00,backwash_event_start,6.399182384997455,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-05 09:45:00
+2024-09-05 09:45:00,backwash_event_end,6.399182384997455,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-05 09:00:00
+2024-09-05 10:00:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-04 01:45:00
+2024-09-09 22:15:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-10 09:45:00
+2024-09-10 09:00:00,backwash_event_start,6.382936667104659,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-10 09:30:00
+2024-09-10 09:30:00,backwash_event_end,6.382936667104659,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-10 09:00:00
+2024-09-10 09:45:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-09 22:15:00
+2024-09-14 14:45:00,backwash_event_start,4.9975759972443905,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-14 19:45:00
+2024-09-14 14:45:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-14 20:00:00
+2024-09-14 19:45:00,backwash_event_end,4.9975759972443905,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-14 14:45:00
+2024-09-14 20:00:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-14 14:45:00
+2024-09-17 08:30:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-17 12:45:00
+2024-09-17 12:00:00,backwash_event_start,5.8253519144154655,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-17 12:30:00
+2024-09-17 12:30:00,backwash_event_end,5.8253519144154655,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-17 12:00:00
+2024-09-17 12:45:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-17 08:30:00
+2024-09-21 10:00:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-21 16:15:00
+2024-09-21 15:30:00,backwash_event_start,8.851261106797159,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-21 16:00:00
+2024-09-21 16:00:00,backwash_event_end,8.851261106797159,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-21 15:30:00
+2024-09-21 16:15:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-21 10:00:00
+2024-09-22 21:00:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-23 16:00:00
+2024-09-23 16:00:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-22 21:00:00
+2024-09-23 18:45:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-24 09:30:00
+2024-09-24 08:30:00,backwash_event_start,5.357696751230131,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-24 09:00:00
+2024-09-24 09:00:00,backwash_event_end,5.357696751230131,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-24 08:30:00
+2024-09-24 09:30:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-23 18:45:00
+2024-09-27 15:30:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-29 14:15:00
+2024-09-29 13:15:00,backwash_event_start,8.803441560048281,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-29 14:00:00
+2024-09-29 14:00:00,backwash_event_end,8.803441560048281,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-29 13:15:00
+2024-09-29 14:15:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-27 15:30:00
+2024-09-29 17:15:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-30 09:45:00
+2024-09-30 09:00:00,backwash_event_start,7.45741537754607,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-30 09:15:00
+2024-09-30 09:15:00,backwash_event_end,7.45741537754607,Phase 2: Backwash Event,#bf5700,backwash_event,2024-09-30 09:00:00
+2024-09-30 09:45:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-29 17:15:00
+2024-09-30 14:00:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-10-01 13:00:00
+2024-10-01 09:30:00,backwash_event_end,5.733853536067167,Phase 2: Backwash Event,#bf5700,backwash_event,2024-10-01 09:30:00
+2024-10-01 09:30:00,backwash_event_start,5.733853536067167,Phase 2: Backwash Event,#bf5700,backwash_event,2024-10-01 09:30:00
+2024-10-01 13:00:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-09-30 14:00:00
+2024-10-05 08:30:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-10-06 10:45:00
+2024-10-06 09:00:00,backwash_event_end,5.771632395236521,Phase 2: Backwash Event,#bf5700,backwash_event,2024-10-06 09:00:00
+2024-10-06 09:00:00,backwash_event_start,5.771632395236521,Phase 2: Backwash Event,#bf5700,backwash_event,2024-10-06 09:00:00
+2024-10-06 10:45:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-10-05 08:30:00
+2024-10-08 21:15:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-10-09 07:30:00
+2024-10-09 07:30:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-10-08 21:15:00
+2024-10-09 07:45:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-10-10 11:30:00
+2024-10-10 09:30:00,backwash_event_start,7.810011031490212,Phase 2: Backwash Event,#bf5700,backwash_event,2024-10-10 09:30:00
+2024-10-10 09:30:00,backwash_event_end,7.810011031490212,Phase 2: Backwash Event,#bf5700,backwash_event,2024-10-10 09:30:00
+2024-10-10 11:30:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-10-09 07:45:00
+2024-10-12 08:00:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-10-12 08:15:00
+2024-10-12 08:15:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-10-12 08:00:00
+2024-10-12 14:45:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-10-12 21:30:00
+2024-10-12 20:30:00,backwash_event_start,6.671018645120352,Phase 2: Backwash Event,#bf5700,backwash_event,2024-10-12 20:45:00
+2024-10-12 20:45:00,backwash_event_end,6.671018645120352,Phase 2: Backwash Event,#bf5700,backwash_event,2024-10-12 20:30:00
+2024-10-12 21:30:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-10-12 14:45:00
+2024-10-17 14:00:00,process_start,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-10-17 17:00:00
+2024-10-17 15:30:00,backwash_event_start,5.08668088221875,Phase 2: Backwash Event,#bf5700,backwash_event,2024-10-17 16:00:00
+2024-10-17 16:00:00,backwash_event_end,5.08668088221875,Phase 2: Backwash Event,#bf5700,backwash_event,2024-10-17 15:30:00
+2024-10-17 17:00:00,process_end,,Phase 1: Backwash Process Duration,#9cadb7,process_duration,2024-10-17 14:00:00
