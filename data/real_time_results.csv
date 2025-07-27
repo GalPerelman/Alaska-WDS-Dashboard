@@ -1,4 +1,4 @@
-Timestamp,"Master Meter Flow Rate, GPM",Is_Over_Zero,Is_Event
+Timestamp,Flow (m³/hr),Is_Over_Zero,Is_Event
 5/1/2024 0:00,45.39111111,FALSE,FALSE
 5/1/2024 0:30,44.05777778,FALSE,FALSE
 5/1/2024 1:00,42.05777778,FALSE,FALSE

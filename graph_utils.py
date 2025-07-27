@@ -38,7 +38,7 @@ def plot_time_series(
     else:
         fig = make_subplots(rows=1, cols=1, shared_xaxes=True, vertical_spacing=0.1)
         for col in cols:
-            fig.add_trace(go.Scatter(x=data.index, y=data[col], **line_kw))
+            fig.add_trace(go.Scatter(x=data.index, y=data[col], zorder=5, **line_kw))
             fig.update_yaxes(title=col, secondary_y=False, row=1, col=1)
         fig.update_layout(height=height_single*2.5)
         fig.update_xaxes(rangeslider={'visible': True, "bordercolor": "black", "borderwidth": 1},
