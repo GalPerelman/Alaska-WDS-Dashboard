@@ -64,7 +64,7 @@ def water_losses_page():
                 x=[start, end], y=[0, vol],
                 mode="lines",
                 marker=dict(size=20, color="#bf5700"),  # invisible
-                customdata=[[start, end]],
+                customdata=[[start, end]] * 2,
                 hovertemplate=(
                     "<b>Phase 2 : Backwash Event</b><br>"
                     "Start : %{customdata[0]|%Y-%m-%d %H:%M}<br>"
