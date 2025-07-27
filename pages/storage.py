@@ -56,7 +56,7 @@ def storage_page():
         tickfont_size=14,
     )
     fig.update_yaxes(
-        title_text="Water Level [m]",
+        title_text="Water Level (m)",
         title_font_size=16,
         tickfont_size=16,
     )

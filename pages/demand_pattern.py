@@ -37,7 +37,7 @@ def demands_page():
     # one tick every 3 h  (1 h = 3 600 000 ms)
     fig.update_xaxes(title_text="Time of Day", tickformat="%H:%M", dtick=3_600_000 * 3)
 
-    fig.update_yaxes(title_text="Demand, m³/hr")
+    fig.update_yaxes(title_text="Demand (m³/hr)")
     fig.update_layout(
         legend_title_text="",
         font=dict(size=18, color='black'),

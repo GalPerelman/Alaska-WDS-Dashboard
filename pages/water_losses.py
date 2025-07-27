@@ -101,14 +101,14 @@ def water_losses_page():
     ))
 
     fig.update_yaxes(
-        title_text="Backwash Volume [m³]",
+        title_text="Backwash Volume (m³)",
         title_font_size=16,
         range=[0, y_max],
         tickfont_size=16,
     )
 
     fig.update_xaxes(
-        title_text="Date / Time",
+        title_text="Date",
         title_font_size=16,
         tickformat="%d %b",
         tickfont_size=16,

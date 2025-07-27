@@ -26,8 +26,6 @@ def plot_time_series(
     else:
         cols = data.columns.tolist()
 
-
-    # ---------- build Plotly figure ------------------------------------------
     if len(cols) > 1:
         fig = make_subplots(rows=len(cols), cols=1, shared_xaxes=True, vertical_spacing=0.1)
         for i, col in enumerate(cols, start=1):

@@ -22,6 +22,6 @@ def pump_curves_page():
                   row=1, col=2,
                   )
     fig.update_yaxes(title="Head (m)", secondary_y=False, row=1, col=2)
-    fig.update_xaxes(title="Flow (m^3/hr)", row=1, col=2)
+    fig.update_xaxes(title="Flow (m³/hr)", row=1, col=2)
     fig.update_layout(showlegend=False, margin=dict(r=50, l=50), width=500)
     st.plotly_chart(fig, use_container_width=True)
