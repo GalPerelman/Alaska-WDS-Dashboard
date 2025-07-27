@@ -125,5 +125,6 @@ def water_losses_page():
         ),
         margin=dict(l=80, r=40, t=80, b=60),
         hovermode="x",
+        yaxis=dict(showgrid=False)
     )
     st.plotly_chart(fig, use_container_width=True)
