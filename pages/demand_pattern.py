@@ -15,14 +15,14 @@ def demands_page():
     data = pd.read_csv("data/median_demand_plotted_points.csv")  # replace with pd.read_csv("file.csv")
     data["time_dt"] = pd.to_datetime("2000-01-01 " + data["time"])  # dummy date
 
-    dow_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    daw_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
     fig = px.scatter(
         data,
         x="time_dt",
         y="median_demand_m3_hr",
         color="day_of_week",
-        category_orders={"day_of_week": dow_order},
+        category_orders={"day_of_week": daw_order},
         color_discrete_sequence=list(WEEKDAY_COLORS.values()),
         custom_data=["day_of_week"]
     )
