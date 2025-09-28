@@ -1,16 +1,20 @@
 import numpy as np
 import pandas as pd
+import calendar
 import streamlit as st
 import plotly.graph_objects as go
+
+import graph_utils
 
 
 def demand_analysis_page():
     st.title("Demand Analysis")
-    DEMAND_COL = "Supply Flow (m³/hr)"
+    DEMAND_COL = "Master Meter Flow Rate, GPM"
 
     data = pd.read_csv("data/raw_timeseries_data.csv", index_col=0)
+    data = pd.read_csv("data/1_raw sensor data/3_system_flow.csv", index_col=0)
     data.index = pd.to_datetime(data.index)
-    data = data.resample("60T").mean()  # ensure regular 1-h intervals
+    data = data.resample("60min").mean()  # ensure regular 1-h intervals
 
     freq_map = {
         "Daily": "D",
@@ -58,6 +62,10 @@ def demand_analysis_page():
     fig = go.Figure()
     for label, ser in aligned.items():
         fig.add_trace(go.Scatter(x=x_domain, y=ser.reindex(x_domain).values, mode="lines+markers", name=label))
+    fig.update_layout(
+        yaxis_title="Consumption (GPM)",
+        yaxis=dict(tickformat=",.0f")
+    )
     st.plotly_chart(fig, use_container_width=True)
 
     # Add Statistics table
@@ -103,10 +111,42 @@ def demand_analysis_page():
         )])
         # Auto height: ~row_count * row_height + header
         fig.update_layout(margin=dict(l=0, r=0, t=0, b=0),
-                          height=int((len(df) + 1) * 32 + 40))
+                          height=min(250, int((len(df) + 1) * 32 + 40))
+                          )
         st.plotly_chart(fig, use_container_width=True)
 
     stats_table_plotly(stats_df)
+
+    st.subheader("Monthly Totals", )
+    totals = data[DEMAND_COL].astype(float).groupby([data.index.month, data.index.year]).sum()
+    totals = totals.reset_index()
+    totals.columns = ["month", "year", "total"]
+
+    pivot_df = totals.pivot(index="month", columns="year", values="total")
+    fig = go.Figure()
+    for i, year in enumerate(pivot_df.columns):
+        fig.add_trace(
+            go.Bar(
+                x=[calendar.month_name[m] for m in pivot_df.index],  # month names
+                y=pivot_df[year],
+                name=str(year),
+                marker=dict(
+                    color=graph_utils.BAR_COLORS[i],
+                    line=dict(
+                        color="black",  # edge color
+                        width=1  # edge thickness
+                    )
+                )
+            )
+        )
+
+    # Update layout
+    fig.update_layout(
+        barmode="group",  # side-by-side grouped bars
+        yaxis_title="Total Consumption (GPM)",
+        yaxis=dict(tickformat=",.0f")
+    )
+    st.plotly_chart(fig, use_container_width=True)
 
 
 def build_period_options(idx: pd.DatetimeIndex, mode: str):
