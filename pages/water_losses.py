@@ -13,19 +13,21 @@ def water_losses_page():
     df["timestamp"] = pd.to_datetime(df["timestamp"])
     df["paired_timestamp"] = pd.to_datetime(df["paired_timestamp"])
 
+    df["volume_ft3"] = df["volume_m3"] * 35.3147  # m3 to ft3
+
     events = df[df["data_type"] == "backwash_event"].copy()
     process = df[df["data_type"] == "process_duration"].copy()
 
     # Build lists of (start, end, volume) pairs
     event_pairs = events[events["event_type"] == "backwash_event_start"][[
-        "timestamp", "paired_timestamp", "volume_m3"
+        "timestamp", "paired_timestamp", "volume_ft3"
     ]]
     duration_pairs = process[process["event_type"] == "process_start"][[
         "timestamp", "paired_timestamp"
     ]]
 
     # For a neat y-axis limit
-    y_max = 1.0 * event_pairs["volume_m3"].max()
+    y_max = 1.0 * event_pairs["volume_ft3"].max()
 
     fig = go.Figure()
     # ---------------- Phase 1 : grey background spans ----------------------------
@@ -101,7 +103,7 @@ def water_losses_page():
     ))
 
     fig.update_yaxes(
-        title_text="Backwash Volume (m³)",
+        title_text="Backwash Volume (ft³)",
         title_font_size=16,
         range=[0, y_max],
         tickfont_size=16,
