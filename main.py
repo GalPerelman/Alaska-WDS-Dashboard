@@ -12,7 +12,7 @@ st.set_page_config(page_title="Alaska Dashboard", layout="wide")
 
 pg_main = st.Page(main_page, title="Home")
 pg_raw = st.Page(raw_data_page, title="Raw Data")
-pg_dem_analysis = st.Page(demand_analysis_page, title="Demands Analysis")
+pg_dem_analysis = st.Page(demand_analysis_page, title="Demands")
 pg_pumps = st.Page(pump_curves_page, title="Pump Curves")
 pg_water_losses = st.Page(water_losses_page, title="Water Losses")
 pg_storage = st.Page(storage_page, title="Storage")
