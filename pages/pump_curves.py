@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 import graph_utils
+import utils
 
 symbol_map = {
             "*": "star",
@@ -45,7 +46,7 @@ def pump_curves_page():
     df = df.sort_values(["Date", "cluster"])
 
     min_d, max_d = df["Date"].min().date(), df["Date"].max().date()
-    date_win = st.slider("Select window", min_value=min_d, max_value=max_d, value=(min_d, max_d))
+    date_win = st.slider(r"$\textsf{\Large Select window}$", min_value=min_d, max_value=max_d, value=(min_d, max_d))
     st.divider()
     mask = (df["Date"] >= pd.Timestamp(date_win[0])) & (df["Date"] <= pd.Timestamp(date_win[1]))
     dfv = df.loc[mask].copy()
@@ -92,6 +93,11 @@ def pump_curves_page():
     fig.update_yaxes(title_text="Pump Head (PSI)", row=1, col=2)
     fig.update_layout(legend_title_text="Clusters", height=480, margin=dict(l=10, r=10, t=20, b=20))
 
+    fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_annotations(font=dict(size=utils.GRAPHS_FONT_SIZE))
     st.plotly_chart(fig, use_container_width=True)
 
     st.divider()

@@ -16,10 +16,10 @@ def raw_data_page():
     pressure = pd.read_csv("data/1_raw sensor data/4_system_pressure.csv", index_col=0, parse_dates=True)
 
     raw_data = pd.concat([
-        treated_flow["Filtered Water Flow Rate, GPM"].rename("Treated Flow (GPM)"),
-        tank["WST Height, ft"].rename("Tank Level (ft)"),
-        system_flow["Master Meter Flow Rate, GPM"].rename("System Flow (GPM)"),
-        pressure["Distribution System Pressure, psi"].rename("System Pressure (PSI)"),
+        treated_flow["Filtered Water Flow Rate, GPM"].rename("Treated Flow<br>(GPM)"),
+        tank["WST Height, ft"].rename("Tank Level<br>(ft)"),
+        system_flow["Master Meter Flow Rate, GPM"].rename("System Flow<br>(GPM)"),
+        pressure["Distribution System Pressure, psi"].rename("System Pressure<br>(PSI)"),
                           ], axis=1)
 
     fig = graph_utils.plot_time_series(

@@ -1,8 +1,8 @@
 import pandas as pd
 import streamlit as st
-import plotly.express as px
 
 import graph_utils
+import utils
 
 
 def storage_page():
@@ -66,4 +66,9 @@ def storage_page():
     fig.update_layout(
         hovermode="x unified"
     )
+
+    fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
     st.plotly_chart(fig)

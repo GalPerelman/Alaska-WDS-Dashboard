@@ -1,8 +1,8 @@
 import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
-import plotly.express as px
 
+import utils
 
 def water_losses_page():
     st.title("Backwash frequency, volume, duration")
@@ -129,4 +129,9 @@ def water_losses_page():
         hovermode="x",
         yaxis=dict(showgrid=False)
     )
+
+    fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
     st.plotly_chart(fig, use_container_width=True)

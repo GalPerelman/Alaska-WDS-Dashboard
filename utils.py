@@ -1,6 +1,8 @@
 import streamlit as st
 import base64
 
+GRAPHS_FONT_SIZE = 18
+
 
 def custom_button(png_path: str, label: str, button_id: str):
     with open(png_path, "rb") as f:

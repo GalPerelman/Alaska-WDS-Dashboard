@@ -6,6 +6,8 @@ from typing import List
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+import utils
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 BAR_COLORS = ["#223b9f", "#a0d7f4", "#fad06c", "#f74013"]
@@ -47,6 +49,10 @@ def plot_time_series(
                          row=len(cols), col=1, rangeslider_thickness=0.18)
 
     fig.update_layout(showlegend=False, margin=dict(r=50, l=50))
+    fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
     return fig
 
 

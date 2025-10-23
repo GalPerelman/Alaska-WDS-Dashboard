@@ -5,6 +5,7 @@ import streamlit as st
 import plotly.graph_objects as go
 
 import graph_utils
+import utils
 
 
 def demand_analysis_page():
@@ -66,6 +67,10 @@ def demand_analysis_page():
         yaxis_title="Consumption (GPM)",
         yaxis=dict(tickformat=",.0f")
     )
+    fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
     st.plotly_chart(fig, use_container_width=True)
 
     # Add Statistics table
@@ -146,6 +151,10 @@ def demand_analysis_page():
         yaxis_title="Total Consumption (GPM)",
         yaxis=dict(tickformat=",.0f")
     )
+    fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
     st.plotly_chart(fig, use_container_width=True)
 
 
