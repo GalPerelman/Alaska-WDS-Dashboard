@@ -16,10 +16,10 @@ def custom_button(png_path: str, label: str, button_id: str):
             flex-direction: column;   /* stack vertically */
             align-items: center;      /* center horizontally */
             justify-content: center;  /* center vertically */
-            background-color: white;
+            background-color: black;
             color: white;
             padding: 12px 20px;
-            border: grey 1px solid;
+            border: white 2px solid;
             border-radius: 8px;
             text-decoration: none;
             font-size: 20px;
