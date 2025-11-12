@@ -19,7 +19,9 @@ def plot_time_series(
         data: pd.DataFrame,
         data_col_names: List[str] | None = None,    # optional column name for single-column data
         line_kw: dict | None = None,                # forwarded to fig.add_trace()
-        height_single: int = 200,                   # px for a single chart
+        height_single: int = 250,                   # px for a single chart
+        sharex=False,
+        same_color=False
 ):
 
     data.index = pd.to_datetime(data.index)  # ensure index is datetime-like
@@ -29,10 +31,17 @@ def plot_time_series(
     else:
         cols = data.columns.tolist()
 
+    if same_color:
+        plot_colors = [COLORS[0] for _ in cols]
+    else:
+        plot_colors = COLORS[:len(cols)+1]
+
+    print(plot_colors)
+
     if len(cols) > 1:
-        fig = make_subplots(rows=len(cols), cols=1, shared_xaxes=True, vertical_spacing=0.1)
+        fig = make_subplots(rows=len(cols), cols=1, shared_xaxes=sharex, vertical_spacing=0.15)
         for i, col in enumerate(cols, start=1):
-            fig.add_trace(go.Scatter(x=data.index, y=data[col], name=col, line=dict(color=COLORS[0]), **line_kw),
+            fig.add_trace(go.Scatter(x=data.index, y=data[col], name=col, line=dict(color=plot_colors[i]), **line_kw),
                           row=i, col=1)
             fig.update_yaxes(title=col, secondary_y=False, row=i, col=1)
         fig.update_layout(height=height_single * len(cols))
@@ -40,9 +49,9 @@ def plot_time_series(
         #                  row=len(cols), col=1, rangeslider_thickness=0.1)
 
     else:
-        fig = make_subplots(rows=1, cols=1, shared_xaxes=True, vertical_spacing=0.1)
-        for col in cols:
-            fig.add_trace(go.Scatter(x=data.index, y=data[col], zorder=5, **line_kw))
+        fig = make_subplots(rows=1, cols=1, shared_xaxes=sharex, vertical_spacing=0.1)
+        for i, col in enumerate(cols):
+            fig.add_trace(go.Scatter(x=data.index, y=data[col], zorder=5, line=dict(color=plot_colors[0]), **line_kw))
             fig.update_yaxes(title=col, secondary_y=False, row=1, col=1)
         fig.update_layout(height=height_single*2.5)
         fig.update_xaxes(rangeslider={'visible': True, "bordercolor": "black", "borderwidth": 1},
