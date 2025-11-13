@@ -9,6 +9,14 @@ import utils
 
 
 def demand_analysis_page():
+    st.markdown("""
+        <style>
+        .stHeadingContainer {
+            margin-bottom: -20px;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
     st.title("Demand Analysis")
     DEMAND_COL = "Master Meter Flow Rate, GPM"
 
@@ -44,6 +52,9 @@ def demand_analysis_page():
         st.session_state.selected_periods = period_options
 
     st.button("Select all", on_click=_select_all)
+    display_hourly = st.checkbox("Display Hourly Data", value=True)
+    if display_hourly and freq_label == "Daily":
+        st.text("Daily data is already in hourly resolution")
 
     x_domain, x_kind = get_x_domain(freq_label)
 
@@ -60,18 +71,92 @@ def demand_analysis_page():
             label = str(int(p))
             aligned[label] = series_for_monthly_by_year(data[DEMAND_COL].astype(float), int(p), how=agg_map[agg_for_plot])
 
-    fig = go.Figure()
-    for label, ser in aligned.items():
-        fig.add_trace(go.Scatter(x=x_domain, y=ser.reindex(x_domain).values, mode="lines+markers", name=label))
-    fig.update_layout(
-        yaxis_title="Consumption (GPM)",
-        yaxis=dict(tickformat=",.0f")
-    )
-    fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
-    fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
-    fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
-    fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
-    st.plotly_chart(fig, use_container_width=True)
+    if freq_label in ("Weekly", "Monthly") and selected_periods and display_hourly:
+        col1, spacer, col2 = st.columns([8, 1, 10])
+        with col1:
+            st.text(" ")
+            st.subheader("Aggregated Data", )
+            fig = go.Figure()
+            for label, ser in aligned.items():
+                fig.add_trace(go.Scatter(x=x_domain, y=ser.reindex(x_domain).values, mode="lines+markers", name=label))
+            fig.update_layout(
+                yaxis_title="Consumption (GPM)",
+                yaxis=dict(tickformat=",.0f")
+            )
+            fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+            fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+            fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+            fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+            fig.update_layout(margin=dict(t=0))
+            fig.update_layout(showlegend=False)
+            st.plotly_chart(fig, use_container_width=True)
+
+        with col2:
+            st.subheader("Hourly profiles", )
+            hourly_fig = go.Figure()
+            demand_series = data[DEMAND_COL].astype(float)
+            if freq_label == "Weekly":
+                # Normalize each selected week to an "hour of week" axis: 0..167
+                x_hours = list(range(24 * 7))
+                for p in selected_periods:
+                    start, end = p.split(" - ")
+                    hourly_ser = hourly_series_for_week(demand_series, start, end)
+                    hourly_fig.add_trace(
+                        go.Scatter(
+                            x=x_hours[:len(hourly_ser)],
+                            y=hourly_ser.values,
+                            mode="lines",
+                            name=p,
+                        )
+                    )
+                hourly_fig.update_xaxes(title="Hour of week (0–167)")
+
+            elif freq_label == "Monthly":
+                # Here "Monthly" mode means: compare years.
+                # Show each selected year as its own hourly time series.
+                for label in selected_periods:
+                    year = int(label)
+                    hourly_ser = hourly_series_for_year(demand_series, year)
+                    if hourly_ser.empty:
+                        continue
+                    hourly_fig.add_trace(
+                        go.Scatter(
+                            x=hourly_ser.index,
+                            y=hourly_ser.values,
+                            mode="lines",
+                            name=str(year),
+                        )
+                    )
+                hourly_fig.update_xaxes(title="Time (hourly)")
+
+            hourly_fig.update_layout(
+                yaxis_title="Consumption (GPM)",
+                yaxis=dict(tickformat=",.0f"),
+            )
+            hourly_fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+            hourly_fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+            hourly_fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+            hourly_fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+            hourly_fig.update_layout(margin=dict(t=5))
+            st.plotly_chart(hourly_fig, use_container_width=True)
+    #######################################################################################################
+
+    else:
+        st.text(" ")
+        st.subheader("Aggregated Data", )
+        fig = go.Figure()
+        for label, ser in aligned.items():
+            fig.add_trace(go.Scatter(x=x_domain, y=ser.reindex(x_domain).values, mode="lines+markers", name=label))
+        fig.update_layout(
+            yaxis_title="Consumption (GPM)",
+            yaxis=dict(tickformat=",.0f")
+        )
+        fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+        fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+        fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+        fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+        fig.update_layout(margin=dict(t=0))
+        st.plotly_chart(fig, use_container_width=True)
 
     # Add Statistics table
     def summarize_period(ser: pd.Series) -> pd.Series:
@@ -88,7 +173,8 @@ def demand_analysis_page():
     # Optional: nice formatting
     fmt = {c: "{:,.2f}" for c in stats_df.columns}
 
-    st.subheader("Statistics", )
+    st.text(" ")
+    st.subheader("Aggregated Statistics", )
     csv = stats_df.to_csv(index=True).encode("utf-8")
     st.download_button(
         label="Download Table",
@@ -155,6 +241,7 @@ def demand_analysis_page():
     fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
     fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
     fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+    fig.update_layout(margin=dict(t=0))
     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -263,3 +350,43 @@ def series_for_monthly_by_year(s: pd.Series, year: int, how="sum"):
     # map 1..12 -> month names
     out.index = [months[m - 1] for m in out.index]
     return out.reindex(months, fill_value=np.nan)
+
+
+def hourly_series_for_week(s: pd.Series, start_date, end_date) -> pd.Series:
+    """
+    Return a 1D hourly series for a given [start_date, end_date] week,
+    aligned to a 0..167 'hour of week' index.
+    """
+    start = pd.Timestamp(start_date)
+    # include the full last day up to 23:00
+    end = pd.Timestamp(end_date) + pd.Timedelta(days=1) - pd.Timedelta(hours=1)
+
+    ss = s.loc[(s.index >= start) & (s.index <= end)]
+    if ss.empty:
+        return pd.Series(index=pd.RangeIndex(24 * 7), dtype=float)
+
+    # ensure hourly frequency
+    ss = ss.resample("H").mean()
+
+    expected_len = 24 * 7
+    ss = ss.iloc[:expected_len]  # just in case there is extra data
+    # normalize index to 0..len-1 so we can align weeks on top of each other
+    ss.index = pd.RangeIndex(len(ss))
+
+    # pad if we have fewer than 168 points
+    if len(ss) < expected_len:
+        ss = ss.reindex(pd.RangeIndex(expected_len))
+
+    return ss
+
+
+def hourly_series_for_year(s: pd.Series, year: int) -> pd.Series:
+    """
+    Return an hourly series for a given year, indexed by the actual timestamps.
+    """
+    ss = s.loc[s.index.year == int(year)]
+    if ss.empty:
+        return pd.Series(dtype=float)
+
+    ss = ss.resample("H").mean()
+    return ss
