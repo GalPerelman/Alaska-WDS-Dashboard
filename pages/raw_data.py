@@ -7,6 +7,14 @@ import graph_utils
 def raw_data_page():
     st.title("Raw Data")
     st.text(" ")
+    st.markdown("""
+    <span style='
+        font-size: 20px;
+        margin-top: 0; 
+    '>
+    Timestamps are according to Alaska Standard Time.
+    </span>
+    """, unsafe_allow_html=True)
 
     raw_data = pd.read_csv("data/raw_timeseries_data.csv", index_col=0)
 
