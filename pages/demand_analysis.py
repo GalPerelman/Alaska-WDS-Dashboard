@@ -216,11 +216,24 @@ def demand_analysis_page():
     pivot_df = totals.pivot(index="month", columns="year", values="total")
     fig = go.Figure()
     for i, year in enumerate(pivot_df.columns):
+        months = pivot_df.index
+        month_names = [calendar.month_name[m] for m in months]
+        values = pivot_df[year].values
+        color = graph_utils.BAR_COLORS[i]
+
+        hover = (
+            f"<span style='color:{color};'>"
+            "%{customdata[0]} %{customdata[1]}: %{y:,.0f} GPM"
+            "</span><extra></extra>"
+        )
+
         fig.add_trace(
             go.Bar(
                 x=[calendar.month_name[m] for m in pivot_df.index],  # month names
                 y=pivot_df[year],
                 name=str(year),
+                customdata=np.stack([month_names, np.full(len(values), year)], axis=-1),
+                hovertemplate=hover,
                 marker=dict(
                     color=graph_utils.BAR_COLORS[i],
                     line=dict(
