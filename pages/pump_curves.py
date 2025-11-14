@@ -45,6 +45,12 @@ def pump_curves_page():
     df["Date"] = pd.to_datetime(df["Date"])
     df = df.sort_values(["Date", "cluster"])
 
+    resample_hr = st.number_input(r"$\textsf{\Large Aggregation Resolution (Hours):}$",
+                                  min_value=1, max_value=24, value=2, step=1, width=300)
+    df.index = df['Date']
+    df = df.resample(f'{resample_hr}h').first()
+    st.text(" ")
+
     min_d, max_d = df["Date"].min().date(), df["Date"].max().date()
     date_win = st.slider(r"$\textsf{\Large Select window}$", min_value=min_d, max_value=max_d, value=(min_d, max_d))
     st.divider()
@@ -56,6 +62,9 @@ def pump_curves_page():
     for cl in df["cluster"].unique():
         sub_all = df[df["cluster"] == cl]  # for legend item spanning full series
         sub_view = dfv[dfv["cluster"] == cl]  # respects selected date window
+
+        if sub_all.empty:
+            continue
 
         color = sub_all["color"].iloc[0]
         llegend_label = f"cluster-{legend_items[int(cl)]}"  # legend group name
