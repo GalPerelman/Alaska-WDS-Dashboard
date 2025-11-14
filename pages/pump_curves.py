@@ -58,33 +58,33 @@ def pump_curves_page():
         sub_view = dfv[dfv["cluster"] == cl]  # respects selected date window
 
         color = sub_all["color"].iloc[0]
-        llegend_label = f"cluster-{cl}"  # legend group name
+        llegend_label = f"cluster-{legend_items[int(cl)]}"  # legend group name
 
-        # Left: time series
-        fig.add_trace(
-            go.Scatter(
-                x=sub_view["Date"], y=sub_view["pressure_psi"],
-                mode="markers",
-                marker=dict(color=color, size=8, line=dict(width=0.2, color="DarkSlateGrey")),
-                name=f"Cluster {cl}",
-                legendgroup=llegend_label,
-                showlegend=True,
-                legendrank=legend_items[cl]
-            ),
-            row=1, col=1,
-        )
-
-        # Right: pump curve
+        # left: pump curve
         fig.add_trace(
             go.Scatter(
                 x=sub_view["flow_gpm"], y=sub_view["pressure_psi"],
                 mode="markers",
                 marker=dict(color=color, size=8, line=dict(width=0.2, color="DarkSlateGrey")),
-                name=f"Cluster {cl}",
+                name=f"Cluster {legend_items[int(cl)]}",
                 legendgroup=llegend_label,
                 showlegend=False
             ),
-            row=1, col=2
+            row=1, col=1
+        )
+
+        # Right: time series
+        fig.add_trace(
+            go.Scatter(
+                x=sub_view["Date"], y=sub_view["pressure_psi"],
+                mode="markers",
+                marker=dict(color=color, size=8, line=dict(width=0.2, color="DarkSlateGrey")),
+                name=f"Cluster {legend_items[int(cl)]}",
+                legendgroup=llegend_label,
+                showlegend=True,
+                legendrank=legend_items[cl]
+            ),
+            row=1, col=2,
         )
 
     fig.update_xaxes(title_text="Date", row=1, col=1)
