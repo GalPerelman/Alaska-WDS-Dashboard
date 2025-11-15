@@ -75,34 +75,66 @@ def water_losses_page():
         )
 
     # ---------------- Phase 2 : orange rectangles --------------------------------
+    hover_x = []
+    hover_y = []
+    hover_cd = []
+    line_x = []
+    line_y = []
     for start, end, vol in event_pairs.itertuples(index=False):
-        fig.add_trace(
-            go.Scatter(
-                x=[start, end], y=[0, vol],
-                mode="lines",
-                marker=dict(size=20, color=ORANGE),  # invisible
-                customdata=[[start, end]] * 2,
-                hovertemplate=(
-                    f"<span style='color:{ORANGE};'>"
-                    "<b>Phase 2 : Backwash Event</b><br>"
-                    "Start : %{customdata[0]|%Y-%m-%d %H:%M}<br>"
-                    "End   : %{customdata[1]|%Y-%m-%d %H:%M}<br>"
-                    "Volume: %{y:.2f} m³"
-                    "<extra></extra>"
-                ),
-                showlegend=False,
-                name=""
-            )
-        )
-
+        # 1) true-duration orange rectangle as a shape
         fig.add_shape(
             type="rect",
             x0=start, x1=end, y0=0, y1=vol,
             xref="x", yref="y",
             fillcolor=ORANGE,
-            line_width=0.1,
+            line_width=0,
             layer="below"
         )
+
+        # 2) a visible vertical line at the event start (pixel-wide, easy to see)
+        line_x.extend([start, start, None])  # None breaks the segment between events
+        line_y.extend([0, vol, None])
+
+        # 3) invisible hover marker at the midpoint (for nice tooltips)
+        mid = start + (end - start) / 2
+        hover_x.append(mid)
+        hover_y.append(vol)  # doesn’t matter much; we use customdata
+        hover_cd.append([start, end, vol])
+
+    # trace for visible orange lines (no hover)
+    fig.add_trace(
+        go.Scatter(
+            x=line_x,
+            y=line_y,
+            mode="lines",
+            line=dict(color=ORANGE, width=2.5),
+            hoverinfo="skip",  # <– no hover from these, only for visual
+            showlegend=False,
+            name=""
+        )
+    )
+
+    # trace for hover only (invisible markers)
+    fig.add_trace(
+        go.Scatter(
+            x=hover_x,
+            y=hover_y,
+            mode="markers",
+            marker=dict(size=20, color="rgba(0,0,0,0)"),  # invisible
+            customdata=hover_cd,
+            hovertemplate=(
+                f"<span style='color:{ORANGE};'>"
+                "<b>Phase 2 : Backwash Event</b><br>"
+                "Start : %{customdata[0]|%Y-%m-%d %H:%M}<br>"
+                "End   : %{customdata[1]|%Y-%m-%d %H:%M}<br>"
+                "Volume: %{customdata[2]:.2f} m³"
+                "</span>"
+                "<extra></extra>"
+            ),
+            showlegend=False,
+            name=""
+        )
+    )
 
     # ---------------- Dummy traces for legend icons ------------------------------
     fig.add_trace(go.Scatter(
@@ -128,7 +160,6 @@ def water_losses_page():
     fig.update_xaxes(
         title_text="Date",
         title_font_size=16,
-        tickformat="%d %b",
         tickfont_size=16,
     )
 
@@ -142,7 +173,7 @@ def water_losses_page():
             font=dict(size=14)
         ),
         margin=dict(l=80, r=40, t=80, b=60),
-        hovermode="x unified",
+        hovermode="x",
         yaxis=dict(showgrid=False)
     )
 
