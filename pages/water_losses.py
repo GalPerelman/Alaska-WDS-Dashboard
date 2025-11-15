@@ -4,10 +4,22 @@ import plotly.graph_objects as go
 
 import utils
 
+ORANGE = "#bf5700"
+GREY = "#c8cacc"
+
+
 def water_losses_page():
     st.title("Backwash frequency, volume, duration")
 
     df = pd.read_csv("data/backwash_plot_data_comprehensive.csv")
+
+    df["Date"] = df["timestamp"]
+    df["Date"] = pd.to_datetime(df["Date"])
+    min_d, max_d = df["Date"].min().date(), df["Date"].max().date()
+    date_win = st.slider(r"$\textsf{\Large Select window}$", min_value=min_d, max_value=max_d, value=(min_d, max_d))
+    st.divider()
+    mask = (df["Date"] >= pd.Timestamp(date_win[0])) & (df["Date"] <= pd.Timestamp(date_win[1]))
+    df = df.loc[mask].copy()
 
     # Ensure timestamps are real datetimes
     df["timestamp"] = pd.to_datetime(df["timestamp"])
@@ -40,10 +52,13 @@ def water_losses_page():
                 marker=dict(size=20, color="rgba(0,0,0,0)"),  # invisible
                 customdata=[[start, end]],
                 hovertemplate=(
+                    f"<span style='color:{GREY};'>"
                     "<b>Phase 1 : Backwash Process Duration</b><br>"
                     "Start : %{customdata[0]|%Y-%m-%d %H:%M}<br>"
                     "End   : %{customdata[1]|%Y-%m-%d %H:%M}"
+                    "</span>"
                     "<extra></extra>"
+
                 ),
                 showlegend=False,
                 name=""
@@ -54,7 +69,7 @@ def water_losses_page():
             type="rect",
             x0=start, x1=end, y0=0, y1=y_max,
             xref="x", yref="y",
-            fillcolor="rgba(153,173,183,0.40)",
+            fillcolor=GREY,
             line_width=0,
             layer="below"
         )
@@ -65,9 +80,10 @@ def water_losses_page():
             go.Scatter(
                 x=[start, end], y=[0, vol],
                 mode="lines",
-                marker=dict(size=20, color="#bf5700"),  # invisible
+                marker=dict(size=20, color=ORANGE),  # invisible
                 customdata=[[start, end]] * 2,
                 hovertemplate=(
+                    f"<span style='color:{ORANGE};'>"
                     "<b>Phase 2 : Backwash Event</b><br>"
                     "Start : %{customdata[0]|%Y-%m-%d %H:%M}<br>"
                     "End   : %{customdata[1]|%Y-%m-%d %H:%M}<br>"
@@ -83,7 +99,7 @@ def water_losses_page():
             type="rect",
             x0=start, x1=end, y0=0, y1=vol,
             xref="x", yref="y",
-            fillcolor="#bf5700",
+            fillcolor=ORANGE,
             line_width=0.1,
             layer="below"
         )
@@ -92,13 +108,13 @@ def water_losses_page():
     fig.add_trace(go.Scatter(
         x=[None], y=[None],
         mode="markers",
-        marker=dict(size=10, color="#9cadb7"),
+        marker=dict(size=10, color=GREY),
         name="Phase 1 : Backwash Process Duration"
     ))
     fig.add_trace(go.Scatter(
         x=[None], y=[None],
         mode="markers",
-        marker=dict(size=10, color="#bf5700"),
+        marker=dict(size=10, color=ORANGE),
         name="Phase 2 : Backwash Event"
     ))
 
@@ -126,7 +142,7 @@ def water_losses_page():
             font=dict(size=14)
         ),
         margin=dict(l=80, r=40, t=80, b=60),
-        hovermode="x",
+        hovermode="x unified",
         yaxis=dict(showgrid=False)
     )
 
