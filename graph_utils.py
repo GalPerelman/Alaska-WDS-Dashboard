@@ -21,7 +21,8 @@ def plot_time_series(
         line_kw: dict | None = None,                # forwarded to fig.add_trace()
         height_single: int = 250,                   # px for a single chart
         sharex=False,
-        same_color=False
+        same_color=False,
+        range_slider=False
 ):
 
     data.index = pd.to_datetime(data.index)  # ensure index is datetime-like
@@ -35,8 +36,6 @@ def plot_time_series(
         plot_colors = [COLORS[0] for _ in cols]
     else:
         plot_colors = COLORS[:len(cols)+1]
-
-    print(plot_colors)
 
     if len(cols) > 1:
         fig = make_subplots(rows=len(cols), cols=1, shared_xaxes=sharex, vertical_spacing=0.15)
@@ -54,8 +53,9 @@ def plot_time_series(
             fig.add_trace(go.Scatter(x=data.index, y=data[col], zorder=5, line=dict(color=plot_colors[0]), **line_kw))
             fig.update_yaxes(title=col, secondary_y=False, row=1, col=1)
         fig.update_layout(height=height_single*2.5)
-        fig.update_xaxes(rangeslider={'visible': True, "bordercolor": "black", "borderwidth": 1},
-                         row=len(cols), col=1, rangeslider_thickness=0.18)
+        if range_slider:
+            fig.update_xaxes(rangeslider={'visible': True, "bordercolor": "black", "borderwidth": 1},
+                             row=len(cols), col=1, rangeslider_thickness=0.18)
 
     fig.update_layout(showlegend=False, margin=dict(r=50, l=50))
     fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
