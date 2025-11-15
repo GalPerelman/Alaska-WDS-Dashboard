@@ -57,7 +57,7 @@ def pump_curves_page():
     mask = (df["Date"] >= pd.Timestamp(date_win[0])) & (df["Date"] <= pd.Timestamp(date_win[1]))
     dfv = df.loc[mask].copy()
 
-    fig = make_subplots(rows=1, cols=2, subplot_titles=("System Pressure (m)", "Pump Curve (Q-H)"))
+    fig = make_subplots(rows=1, cols=2, subplot_titles=("Pump Curve (Q-H)", "System Pressure (m)"))
     legend_items = {7: 1, 8: 2, 9: 3, 10: 4, 11: 5, 12: 6, 13: 7, 14: 8, 15: 9}
     for cl in df["cluster"].unique():
         sub_all = df[df["cluster"] == cl]  # for legend item spanning full series
@@ -97,9 +97,9 @@ def pump_curves_page():
         )
 
     fig.update_xaxes(title_text="Date", row=1, col=1)
-    fig.update_yaxes(title_text="System Pressure (PSI)", row=1, col=1)
+    fig.update_yaxes(title_text="System Pressure (PSI)", row=1, col=2)
     fig.update_xaxes(title_text="Flow Rate (GPM)", row=1, col=2)
-    fig.update_yaxes(title_text="Pump Head (PSI)", row=1, col=2)
+    fig.update_yaxes(title_text="Pump Head (ft)", row=1, col=1)
     fig.update_layout(legend_title_text="Clusters", height=480, margin=dict(l=10, r=10, t=20, b=20))
 
     fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
