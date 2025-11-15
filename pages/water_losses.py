@@ -182,3 +182,20 @@ def water_losses_page():
     fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
     fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
     st.plotly_chart(fig, use_container_width=True)
+
+    # ---------------- Compute metrics -------------------------------------------
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df["paired_timestamp"] = pd.to_datetime(df["paired_timestamp"])
+
+    events = (df.query("data_type == 'backwash_event' and event_type == 'backwash_event_start'").copy())
+
+    # duration per event (minutes)
+    events["duration_min"] = (events["paired_timestamp"] - events["timestamp"]).dt.total_seconds() / 60
+    col1, col2, col3, spacer = st.columns([1, 1, 1, 3])
+    with col1:
+        st.metric("Backwash events", f"{int(len(events))}")
+    with col2:
+        st.metric("Total volume", f"{events['volume_ft3'].sum():.1f} ft³")
+    with col3:
+        st.metric("Average event volume", f"{events['volume_ft3'].mean():.1f} ft³")
+
