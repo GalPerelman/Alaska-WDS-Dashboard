@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
@@ -110,10 +111,38 @@ def pump_curves_page():
     st.plotly_chart(fig, use_container_width=True)
 
     st.divider()
+
+    q_scale = df["flow_gpm"].max() - df["flow_gpm"].min()
+    h_scale = df["pressure_psi"].max() - df["pressure_psi"].min()
+
+    X = np.column_stack([
+        (df["flow_gpm"].to_numpy() / q_scale),
+        (df["pressure_psi"].to_numpy() / h_scale),
+    ])
+    clusters = df["cluster"].to_numpy()
+
+    def predict_cluster_knn(q, h, k=5):
+        qn = q / q_scale
+        hn = h / h_scale
+        diff = X - np.array([qn, hn])
+        dist2 = np.sum(diff ** 2, axis=1)
+        idx_sorted = np.argsort(dist2)[:k]
+        # majority vote among nearest k clusters
+        nearest_clusters = clusters[idx_sorted]
+        values, counts = np.unique(nearest_clusters, return_counts=True)
+        majority_cluster = values[counts.argmax()]
+        # also return the closest point for info
+        closest_idx = idx_sorted[0]
+        return majority_cluster, df.iloc[closest_idx]
+
     col1, col2, col3, spacer = st.columns([1, 1, 1, 0.2])
     with col1:
-        q = st.number_input("Q (GPM)", min_value=0.0, max_value=65.0, value=50.0, key="q_input")
+        q = st.number_input("Q (GPM)", min_value=0.0, max_value=65.0, value=45.0, key="q_input")
     with col2:
-        h = st.number_input("H (PSI)", min_value=6.0, max_value=11.0, value=8.0, key="h_input")
+        h = st.number_input("H (PSI)", min_value=1.0, max_value=15.0, value=7.0, key="h_input")
     with col3:
-        st.metric("Required Pump Speed", q + h)
+        try:
+            cluster, point_info = predict_cluster_knn(q, h, k=3)
+            st.metric("Required Speed Cluster", legend_items[int(cluster)])
+        except Exception as e:
+            st.error(f"Error in prediction: {e}")
