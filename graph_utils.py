@@ -20,6 +20,7 @@ def plot_time_series(
         data_col_names: List[str] | None = None,    # optional column name for single-column data
         line_kw: dict | None = None,                # forwarded to fig.add_trace()
         height_single: int = 250,                   # px for a single chart
+        vertical_spacing=0.15,
         sharex=False,
         same_color=False,
         range_slider=False

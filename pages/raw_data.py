@@ -36,8 +36,15 @@ def raw_data_page():
         Timestamps are according to Alaska Standard Time.
         </span>
         """, unsafe_allow_html=True)
+    st.text(" ")
 
     fig = graph_utils.plot_time_series(
         data=filtered_data,
+        height_single=350,
+        vertical_spacing=0.1,
         line_kw=dict(line_width=1.6))
+
+    # customized the y limits of the last plot - artifically ignore outlier
+    fig.update_yaxes(range=[0, 100], row=4, col=1)
+    fig.update_layout(margin=dict(t=0))
     st.plotly_chart(fig)
