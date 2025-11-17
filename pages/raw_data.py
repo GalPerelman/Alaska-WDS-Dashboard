@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+from PIL import Image
 
 import graph_utils
 
@@ -48,3 +49,32 @@ def raw_data_page():
     fig.update_yaxes(range=[0, 100], row=4, col=1)
     fig.update_layout(margin=dict(t=0))
     st.plotly_chart(fig)
+
+    st.text(" ")
+    st.text(" ")
+    st.divider()
+
+    def resize_to_height(img, target_h):
+        w, h = img.size
+        new_w = int(w * target_h / h)
+        return img.resize((new_w, target_h))
+
+    target_height = 250
+    img1 = Image.open("resources/1_treated_flow_sensor.jpg")
+    img2 = Image.open("resources/2_demand_sensor.jpg")
+    img3 = Image.open("resources/3_tank_level_sensor.jpg")
+    img4 = Image.open("resources/4_pressure_sensor.jpg")
+    img1_resized = resize_to_height(img1, target_height)
+    img2_resized = resize_to_height(img2, target_height)
+    img3_resized = resize_to_height(img3, target_height)
+    img4_resized = resize_to_height(img4, target_height)
+
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.image(img1_resized, caption="Treated Water Flow Rate Meter")
+    with col2:
+        st.image(img2_resized, caption="System Flow Meter")
+    with col3:
+        st.image(img3_resized, caption="Tank Water Level Sensor")
+    with col4:
+        st.image(img4_resized, caption="System Pressure Sensor")
