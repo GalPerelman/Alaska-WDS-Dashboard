@@ -30,7 +30,7 @@ def raw_data_page():
     st.text(" ")
     st.markdown("""
         <span style='
-            font-size: 20px;
+            font-size: 24px;
             margin-top: 0; 
         '>
         Timestamps are according to Alaska Standard Time.
