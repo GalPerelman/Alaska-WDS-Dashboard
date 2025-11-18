@@ -39,66 +39,58 @@ def demand_analysis_page():
         "Median": "median",
     }
 
-    col1, col2 = st.columns([1, 1])
+    col1, col2 = st.columns([1, 3])
     with col1:
         freq_label = st.selectbox("Resampling period", list(freq_map.keys()), index=1)
         freq = freq_map[freq_label]
     with col2:
-        agg_for_plot = st.selectbox("Aggregation for plot", list(agg_map.keys()), index=0)
-
-    period_options = build_period_options(data.index, freq_label)
-    selected_periods = st.multiselect("Select periods to present", period_options, key="selected_periods")
+        # agg_for_plot = st.selectbox("Aggregation for plot", list(agg_map.keys()), index=0)
+        period_options = build_period_options(data.index, freq_label)
+        selected_periods = st.multiselect("Select periods to present", period_options, key="selected_periods")
 
     def _select_all():
         st.session_state.selected_periods = period_options
 
     st.button("Select all", on_click=_select_all)
-    display_hourly = st.checkbox("Display Hourly Data", value=True)
-    if display_hourly and freq_label == "Daily":
-        st.text("Daily data is already in hourly resolution")
 
+    #######################################################################################################
+    # aggregated plot - keep for optional future use
     x_domain, x_kind = get_x_domain(freq_label)
 
-    aligned = {}
-    for p in selected_periods:
-        if freq_label == "Daily":
-            label = pd.Timestamp(p).strftime("%Y-%m-%d")
-            aligned[label] = series_for_daily(data[DEMAND_COL].astype(float), p, how=agg_map[agg_for_plot])
-        elif freq_label == "Weekly":
-            start, end = p.split(" - ")
-            label = f"{pd.Timestamp(start).date()} → {pd.Timestamp(end).date()}"
-            aligned[label] = series_for_weekly(data[DEMAND_COL].astype(float), start, end, how=agg_map[agg_for_plot])
-        elif freq_label == "Monthly":
-            # p is "YYYY-MM"
-            period = pd.Period(p, freq="M")
-            ts = period.to_timestamp()
-            label = ts.strftime("%b %Y")  # e.g. "Jan 2023"
-            aligned[label] = series_for_monthly(
-                data[DEMAND_COL].astype(float),
-                year=ts.year,
-                month=ts.month,
-                how=agg_map[agg_for_plot],
-            )
-        elif freq_label == "Annually":
-            year = int(p)
-            label = str(year)
-            aligned[label] = series_for_monthly_by_year(
-                data[DEMAND_COL].astype(float),
-                year=year,
-                how=agg_map[agg_for_plot],
-            )
+    # aligned = {}
+    # for p in selected_periods:
+    #     if freq_label == "Daily":
+    #         label = pd.Timestamp(p).strftime("%Y-%m-%d")
+    #         aligned[label] = series_for_daily(data[DEMAND_COL].astype(float), p, how=agg_map[agg_for_plot])
+    #     elif freq_label == "Weekly":
+    #         start, end = p.split(" - ")
+    #         label = f"{pd.Timestamp(start).date()} → {pd.Timestamp(end).date()}"
+    #         aligned[label] = series_for_weekly(data[DEMAND_COL].astype(float), start, end, how=agg_map[agg_for_plot])
+    #     elif freq_label == "Monthly":
+    #         # p is "YYYY-MM"
+    #         period = pd.Period(p, freq="M")
+    #         ts = period.to_timestamp()
+    #         label = ts.strftime("%b %Y")  # e.g. "Jan 2023"
+    #         aligned[label] = series_for_monthly(
+    #             data[DEMAND_COL].astype(float),
+    #             year=ts.year,
+    #             month=ts.month,
+    #             how=agg_map[agg_for_plot],
+    #         )
+    #     elif freq_label == "Annually":
+    #         year = int(p)
+    #         label = str(year)
+    #         aligned[label] = series_for_monthly_by_year(
+    #             data[DEMAND_COL].astype(float),
+    #             year=year,
+    #             how=agg_map[agg_for_plot],
+    #         )
+    #######################################################################################################
 
-    if selected_periods and display_hourly:
-        col1, spacer, col2 = st.columns([8, 1, 10])
-        with col1:
-            st.text(" ")
-            st.subheader("Aggregated Data", )
-            fig = go.Figure()
-            for label, ser in aligned.items():
-                fig.add_trace(go.Scatter(x=x_domain, y=ser.reindex(x_domain).values, mode="lines+markers", name=label))
-            fig.update_layout(
-                yaxis_title="Consumption (GPM)",
-                yaxis=dict(tickformat=",.0f")
+    st.subheader("Hourly profiles", )
+    aligned = {}
+    hourly_fig = go.Figure()
+    demand_series = data[DEMAND_COL].astype(float)
     if freq_label == "Daily":
         x_hours = list(range(24))
         for p in selected_periods:
@@ -112,105 +104,104 @@ def demand_analysis_page():
                     name=label,
                 )
             )
-            fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
-            fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
-            fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
-            fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
-            fig.update_layout(margin=dict(t=0))
-            fig.update_layout(showlegend=False)
-            st.plotly_chart(fig, use_container_width=True)
+            aligned[label] = hourly_ser
 
-        with col2:
-            st.subheader("Hourly profiles", )
-            hourly_fig = go.Figure()
-            demand_series = data[DEMAND_COL].astype(float)
-            if freq_label == "Weekly":
-                # Normalize each selected week to an "hour of week" axis: 0..167
-                x_hours = list(range(24 * 7))
-                for p in selected_periods:
-                    start, end = p.split(" - ")
-                    hourly_ser = hourly_series_for_week(demand_series, start, end)
-                    hourly_fig.add_trace(
-                        go.Scatter(
-                            x=x_hours[:len(hourly_ser)],
-                            y=hourly_ser.values,
-                            mode="lines",
-                            name=p,
-                        )
-                    )
-                hourly_fig.update_xaxes(title="Hour of week (0–167)")
+    if freq_label == "Weekly":
+        # Normalize each selected week to an "hour of week" axis: 0..167
+        x_hours = list(range(24 * 7))
+        for p in selected_periods:
+            start, end = p.split(" - ")
+            hourly_ser = hourly_series_for_week(demand_series, start, end)
+            hourly_fig.add_trace(
+                go.Scatter(
+                    x=x_hours[:len(hourly_ser)],
+                    y=hourly_ser.values,
+                    mode="lines",
+                    name=p,
+                    hovertemplate='(%{x:.1f}, %{y:.1f})<br>%{fullData.name}<extra></extra>'
 
-            elif freq_label == "Monthly":
-                # Normalize each selected month to an "hour of month" axis: 0..(31*24-1)
-                x_hours = list(range(31 * 24))
-
-                for p in selected_periods:
-                    period = pd.Period(p, freq="M")
-                    ts = period.to_timestamp()
-                    label = ts.strftime("%b %Y")  # e.g. "Jan 2023"
-
-                    hourly_ser = hourly_series_for_month_aligned(demand_series, ts.year, ts.month)
-                    if hourly_ser.empty:
-                        continue
-
-                    hourly_fig.add_trace(
-                        go.Scatter(
-                            x=x_hours[:len(hourly_ser)],
-                            y=hourly_ser.values,
-                            mode="lines",
-                            name=label,
-                        )
-                    )
-
-                hourly_fig.update_xaxes(title="Hour of month (0–744)")
-
-            elif freq_label == "Annually":
-                # Normalize each selected year to an "hour of year" axis: 0..(365*24-1)
-                x_hours = list(range(365 * 24))
-                for p in selected_periods:
-                    year = int(p)
-                    label = str(year)
-                    hourly_ser = hourly_series_for_year_aligned(demand_series, year)
-                    if hourly_ser.empty:
-                        continue
-                    hourly_fig.add_trace(
-                        go.Scatter(
-                            x=x_hours[:len(hourly_ser)],
-                            y=hourly_ser.values,
-                            mode="lines",
-                            name=label,
-                        )
-                    )
-                hourly_fig.update_xaxes(title="Hour of year (0–8759)")
-
-            hourly_fig.update_layout(
-                yaxis_title="Consumption (GPM)",
-                yaxis=dict(tickformat=",.0f"),
+                )
             )
-            hourly_fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
-            hourly_fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
-            hourly_fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
-            hourly_fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
-            hourly_fig.update_layout(margin=dict(t=5))
-            st.plotly_chart(hourly_fig, use_container_width=True)
-    #######################################################################################################
+            aligned[p] = hourly_ser
 
-    else:
-        st.text(" ")
-        st.subheader("Aggregated Data", )
-        fig = go.Figure()
-        for label, ser in aligned.items():
-            fig.add_trace(go.Scatter(x=x_domain, y=ser.reindex(x_domain).values, mode="lines+markers", name=label))
-        fig.update_layout(
-            yaxis_title="Consumption (GPM)",
-            yaxis=dict(tickformat=",.0f")
-        )
-        fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
-        fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
-        fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
-        fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
-        fig.update_layout(margin=dict(t=0))
-        st.plotly_chart(fig, use_container_width=True)
+        hourly_fig.update_xaxes(title="Hour of week (0–167)")
+
+    elif freq_label == "Monthly":
+        # Normalize each selected month to an "hour of month" axis: 0..(31*24-1)
+        x_hours = list(range(31 * 24))
+
+        for p in selected_periods:
+            period = pd.Period(p, freq="M")
+            ts = period.to_timestamp()
+            label = ts.strftime("%b %Y")  # e.g. "Jan 2023"
+
+            hourly_ser = hourly_series_for_month_aligned(demand_series, ts.year, ts.month)
+            if hourly_ser.empty:
+                continue
+
+            hourly_fig.add_trace(
+                go.Scatter(
+                    x=x_hours[:len(hourly_ser)],
+                    y=hourly_ser.values,
+                    mode="lines",
+                    name=label,
+                    hovertemplate='(%{x:.1f}, %{y:.1f})<br>%{fullData.name}<extra></extra>'
+                )
+            )
+            aligned[p] = hourly_ser
+
+        hourly_fig.update_xaxes(title="Hour of month (0–744)")
+
+    elif freq_label == "Annually":
+        # Normalize each selected year to an "hour of year" axis: 0..(365*24-1)
+        x_hours = list(range(365 * 24))
+        for p in selected_periods:
+            year = int(p)
+            label = str(year)
+            hourly_ser = hourly_series_for_year_aligned(demand_series, year)
+            if hourly_ser.empty:
+                continue
+            hourly_fig.add_trace(
+                go.Scatter(
+                    x=x_hours[:len(hourly_ser)],
+                    y=hourly_ser.values,
+                    mode="lines",
+                    name=label,
+                    hovertemplate='(%{x:.1f}, %{y:.1f})<br>%{fullData.name}<extra></extra>'
+                )
+            )
+            aligned[p] = hourly_ser
+
+        hourly_fig.update_xaxes(title="Hour of year (0–8759)")
+
+    hourly_fig.update_layout(
+        yaxis_title="Consumption (GPM)",
+        yaxis=dict(tickformat=",.0f"),
+    )
+    hourly_fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    hourly_fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    hourly_fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+    hourly_fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+    hourly_fig.update_layout(margin=dict(t=5))
+    st.plotly_chart(hourly_fig, use_container_width=True)
+    #######################################################################################################
+    # aggregated plot - keep for optional future use
+    # st.text(" ")
+    # st.subheader("Aggregated Data", )
+    # fig = go.Figure()
+    # for label, ser in aligned.items():
+    #     fig.add_trace(go.Scatter(x=x_domain, y=ser.reindex(x_domain).values, mode="lines+markers", name=label))
+    # fig.update_layout(
+    #     yaxis_title="Consumption (GPM)",
+    #     yaxis=dict(tickformat=",.0f")
+    # )
+    # fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    # fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
+    # fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+    # fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
+    # fig.update_layout(margin=dict(t=0))
+    # st.plotly_chart(fig, use_container_width=True)
+    #######################################################################################################
 
     # Add Statistics table
     def summarize_period(ser: pd.Series) -> pd.Series:
@@ -554,7 +545,7 @@ def hourly_series_for_year_aligned(s: pd.Series, year: int) -> pd.Series:
     if ss.empty:
         return pd.Series(index=pd.RangeIndex(365 * 24), dtype=float)
 
-    ss = ss.resample("H").mean().sort_index()
+    ss = ss.resample("h").mean().sort_index()
 
     expected_len = 365 * 24
     ss = ss.iloc[:expected_len]        # truncate if leap year or extra data
