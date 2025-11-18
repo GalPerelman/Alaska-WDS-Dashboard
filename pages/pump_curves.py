@@ -21,7 +21,7 @@ symbol_map = {
 
 
 def preprocess():
-    df = pd.read_csv("data/2_pump curves/pressure_pump_curves.csv")
+    df = pd.read_csv("data/2_pump curves/pressure_pump_curves.csv", index_col=0)
 
     # Filter clusters with at least 10 points
     df = df[df.groupby("cluster")["cluster"].transform("count") >= 10]
@@ -33,14 +33,12 @@ def preprocess():
 
     # Change units
     df["flow_gpm"] = df["Master Meter Flow Rate_m3hr"] * 4.40287  # m3/hr to GPM
-    df["pressure_psi"] = df["Distribution System Pressure Head, m"] * 0.433514  # m to psi
+    df["pressure_psi"] = df["Distribution System Pressure Head, psi"]
     return df
 
 
 def pump_curves_page():
     st.title("Pump Curves")
-
-    data = pd.read_csv("data/flow_head_cluster_data.csv")
 
     df = preprocess()
     df["Date"] = df["Timestamp"]
@@ -63,24 +61,27 @@ def pump_curves_page():
     mask = (df["Date"] >= pd.Timestamp(date_win[0])) & (df["Date"] <= pd.Timestamp(date_win[1]))
     dfv = df.loc[mask].copy()
 
-    fig = make_subplots(rows=1, cols=2, subplot_titles=("Pump Curve (Q-H)", "System Pressure (m)"))
+    fig = make_subplots(rows=1, cols=2, subplot_titles=("Pump Curve (Q-H)", "System Pressure (PSI)"),
+                        column_widths=[0.65, 0.35])
     legend_items = {7: 1, 8: 2, 9: 3, 10: 4, 11: 5, 12: 6, 13: 7, 14: 8, 15: 9}
-    for cl in df["cluster"].unique():
+    for i, cl in enumerate(df["cluster"].unique()):
         sub_all = df[df["cluster"] == cl]  # for legend item spanning full series
         sub_view = dfv[dfv["cluster"] == cl]  # respects selected date window
+
+        ts_sub_view = sub_view.resample('W').first()
 
         if sub_all.empty:
             continue
 
-        color = sub_all["color"].iloc[0]
+        color = graph_utils.color_sequence[i]
         llegend_label = f"cluster-{legend_items[int(cl)]}"  # legend group name
 
         # left: pump curve
         fig.add_trace(
             go.Scatter(
-                x=sub_view["flow_gpm"], y=sub_view["pressure_psi"],
+                x=sub_view["flow_gpm"], y=sub_view["pump_head_ft"],
                 mode="markers",
-                marker=dict(color=color, size=8, line=dict(width=0.2, color="DarkSlateGrey")),
+                marker=dict(color=color, size=5, line=dict(width=0.2, color="DarkSlateGrey")),
                 name=f"Cluster {legend_items[int(cl)]}",
                 legendgroup=llegend_label,
                 showlegend=False
@@ -91,22 +92,33 @@ def pump_curves_page():
         # Right: time series
         fig.add_trace(
             go.Scatter(
-                x=sub_view["Date"], y=sub_view["pressure_psi"],
+                x=ts_sub_view["Date"], y=ts_sub_view["pressure_psi"],
                 mode="markers",
-                marker=dict(color=color, size=8, line=dict(width=0.2, color="DarkSlateGrey")),
+                marker=dict(color=color, size=5, line=dict(width=0.2, color="DarkSlateGrey")),
                 name=f"Cluster {legend_items[int(cl)]}",
                 legendgroup=llegend_label,
                 showlegend=True,
-                legendrank=legend_items[cl]
+                legendrank=legend_items[int(cl)]
             ),
             row=1, col=2,
         )
 
-    fig.update_xaxes(title_text="Date", row=1, col=1)
-    fig.update_yaxes(title_text="System Pressure (PSI)", row=1, col=2)
-    fig.update_xaxes(title_text="Flow Rate (GPM)", row=1, col=2)
+    fig.update_xaxes(title_text="Flow Rate (GPM)", row=1, col=1)
     fig.update_yaxes(title_text="Pump Head (ft)", row=1, col=1)
-    fig.update_layout(legend_title_text="Clusters", height=480, margin=dict(l=10, r=10, t=20, b=20))
+
+    fig.update_xaxes(title_text="Date", row=1, col=2)
+    fig.update_yaxes(title_text="System Pressure (PSI)", row=1, col=2)
+
+    fig.update_layout(height=600)
+    fig.update_layout(
+        legend=dict(
+            orientation="h",  # Set legend orientation to horizontal
+            xanchor="center",  # Anchor the legend's horizontal position to its center
+            x=0.5,  # Position the legend horizontally at the center of the figure
+            y=-0.4  # Position the legend vertically below the plot area
+        )
+    )
+    fig.update_layout(margin=dict(l=10, r=10, t=50, b=1))
 
     fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
     fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
