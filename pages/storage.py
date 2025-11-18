@@ -124,7 +124,7 @@ def storage_page():
         with filtered_data_col1:
             delta = round((rel2 - rel1) / rel1, 3)
             delta = f"{delta:.2%}" if delta != 0.0 else None
-            st.metric("Reliability", f"{rel2:.3f}", delta=delta, delta_color="inverse")
+            st.metric("Reliability", f"{rel2:.3f}", delta=delta)
         with filtered_data_col2:
             delta = round((res2 - res1) / res1, 3)
             delta = f"{delta:.2%}" if delta != 0.0 else None
