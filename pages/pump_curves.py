@@ -129,40 +129,43 @@ def pump_curves_page():
 
     st.divider()
 
-    q_scale = df["flow_gpm"].max() - df["flow_gpm"].min()
-    h_scale = df["pressure_psi"].max() - df["pressure_psi"].min()
+    curves = pd.DataFrame({'a': [-0.006755334, -0.006755334, -0.006755334, -0.006755334, -0.006755334, -0.006755334,
+                                 -0.006755334, -0.006755334, -0.006755334
+                                 ],
+                           'b': [0.306215982, 0.322547501, 0.33887902, 0.355210539, 0.371542058, 0.387873577,
+                                 0.404205096, 0.420536615, 0.436868135
+                                 ],
+                           'c': [31.18835733, 34.60382899, 38.19672776, 41.96705362, 45.91480658, 50.03998664,
+                                 54.34259381, 58.82262807, 63.48008943
+                                 ],
+                           'cluster': [7, 8, 9, 10, 11, 12, 13, 14, 15]})
 
-    X = np.column_stack([
-        (df["flow_gpm"].to_numpy() / q_scale),
-        (df["pressure_psi"].to_numpy() / h_scale),
-    ])
-    clusters = df["cluster"].to_numpy()
+    def hard_coded_curves_pred(q, p, l):
+        curves['estimated_head'] = curves['a'] * (q ** 2) + curves['b'] * q + curves['c']
+        calculated_required_head = p - l
+        curves['adjusted_head'] = abs(curves['estimated_head'] - calculated_required_head)
+        min_index = curves['adjusted_head'].idxmin()
+        closest_curve = curves.loc[min_index, 'cluster']
 
-    def predict_cluster_knn(q, h, k=5):
-        qn = q / q_scale
-        hn = h / h_scale
-        diff = X - np.array([qn, hn])
-        dist2 = np.sum(diff ** 2, axis=1)
-        idx_sorted = np.argsort(dist2)[:k]
-        # majority vote among nearest k clusters
-        nearest_clusters = clusters[idx_sorted]
-        values, counts = np.unique(nearest_clusters, return_counts=True)
-        majority_cluster = values[counts.argmax()]
-        # also return the closest point for info
-        closest_idx = idx_sorted[0]
-        return majority_cluster, df.iloc[closest_idx]
+        return closest_curve
 
-    col1, col2, col3, spacer = st.columns([1, 1, 1, 0.2])
+    st.text("Enter the system flow rate and target system pressure to get an operating pump curve")
+
+    col1, col2, col3, col4, spacer = st.columns([1, 1, 1, 1, 0.2])
     with col1:
         q = st.number_input("Q (GPM)", min_value=0.0, max_value=65.0, value=45.0, key="q_input")
     with col2:
-        h = st.number_input("H (PSI)", min_value=1.0, max_value=15.0, value=7.0, key="h_input")
+        p = st.number_input("System Pressure (PSI)", min_value=0.0, max_value=100.0, value=60.0, key="p_input")
     with col3:
+        l = st.number_input("Tank Level (ft)", min_value=0.0, max_value=22.0, value=8.0, key="l_input")
+    with col4:
         try:
-            cluster, point_info = predict_cluster_knn(q, h, k=3)
-            st.metric("Required Speed Cluster", legend_items[int(cluster)])
+            cluster = hard_coded_curves_pred(q, p, l)
+            display_label = legend_items[int(cluster)]
+            st.metric("Required Speed Cluster", display_label)
         except Exception as e:
             st.error(f"Error in prediction: {e}")
+
     st.text(" ")
     st.text(" ")
     st.text(" ")
