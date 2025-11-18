@@ -99,6 +99,18 @@ def demand_analysis_page():
             fig.update_layout(
                 yaxis_title="Consumption (GPM)",
                 yaxis=dict(tickformat=",.0f")
+    if freq_label == "Daily":
+        x_hours = list(range(24))
+        for p in selected_periods:
+            label = pd.Timestamp(p).strftime("%Y-%m-%d")
+            hourly_ser = series_for_daily(demand_series, p, how="mean")
+            hourly_fig.add_trace(
+                go.Scatter(
+                    x=x_hours,
+                    y=hourly_ser.values,
+                    mode="lines",
+                    name=label,
+                )
             )
             fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
             fig.update_yaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
