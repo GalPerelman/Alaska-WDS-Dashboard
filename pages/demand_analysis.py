@@ -263,6 +263,10 @@ def demand_analysis_page():
     stats_table_plotly(stats_df)
 
     st.subheader("Monthly Totals", )
+    # Data was resampled above to hourly resolution
+    # convert data to hourly units: from GPM to gallons per hour
+    data[DEMAND_COL] = data[DEMAND_COL].astype(float) * 60.0
+    # Now we sum hours per month-year thereby getting total gallons per month in Gallons units
     totals = data[DEMAND_COL].astype(float).groupby([data.index.month, data.index.year]).sum()
     totals = totals.reset_index()
     totals.columns = ["month", "year", "total"]
@@ -301,7 +305,7 @@ def demand_analysis_page():
     # Update layout
     fig.update_layout(
         barmode="group",  # side-by-side grouped bars
-        yaxis_title="Total Consumption (GPM)",
+        yaxis_title="Monthly Consumption<br>(Gallons)",
         yaxis=dict(tickformat=",.0f")
     )
     fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
