@@ -26,11 +26,6 @@ def preprocess():
     # Filter clusters with at least 10 points
     df = df[df.groupby("cluster")["cluster"].transform("count") >= 10]
 
-    # Assign colors to clusters
-    unique_clusters = sorted(df["cluster"].unique())
-    color_map = {c: graph_utils.COLORS[i % len(unique_clusters)] for i, c in enumerate(unique_clusters)}
-    df["color"] = df["cluster"].map(color_map)
-
     # Change units
     df["flow_gpm"] = df["Master Meter Flow Rate_m3hr"] * 4.40287  # m3/hr to GPM
     df["pressure_psi"] = df["Distribution System Pressure Head, psi"]
