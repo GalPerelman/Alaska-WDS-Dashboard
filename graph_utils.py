@@ -1,18 +1,26 @@
 import os
 import sys
 import pandas as pd
-import streamlit as st
+
 from typing import List
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import plotly.express as px
 
 import utils
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-BAR_COLORS = ["#223b9f", "#a0d7f4", "#fad06c", "#f74013"]
-COLORS = ["#2050b8", "#6bc3f7", "#0e8a8c", "#94d2bd", "#e9d8a6", "#f0b64a", "#f5912e", "#ee350c", "#a91a0d", "#f79fee"]
-# COLORS = [blue, light blue, Teal, light green, light orange, orange, dark orange, red, dark red, pink]
+COLORS = (["#0F6CB3", "#48ad90", "#6fcfec", "#f3ebb8", "#ade0a3", "#e7d18f", "#7ccb97", "#AAD0EE", "#27787c", "#229bd3"]
+          + ["#adffe8", "#72efdd", "#67e0e0", "#63d2e3", "#21aad4", "#79a8e2", "#8284d9", "#966cda", "#7400b8"]
+          + px.colors.qualitative.Plotly
+          + px.colors.qualitative.D3
+          + px.colors.qualitative.G10
+          + px.colors.qualitative.T10
+          + px.colors.qualitative.Prism
+          )
+
+BAR_COLORS = [COLORS[0], COLORS[1], COLORS[2], COLORS[3]]
 
 
 def plot_time_series(

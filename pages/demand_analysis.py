@@ -86,14 +86,13 @@ def demand_analysis_page():
     #             how=agg_map[agg_for_plot],
     #         )
     #######################################################################################################
-
     st.subheader("Hourly profiles", )
     aligned = {}
     hourly_fig = go.Figure()
     demand_series = data[DEMAND_COL].astype(float)
     if freq_label == "Daily":
         x_hours = list(range(24))
-        for p in selected_periods:
+        for i, p in enumerate(selected_periods):
             label = pd.Timestamp(p).strftime("%Y-%m-%d")
             hourly_ser = series_for_daily(demand_series, p, how="mean")
             hourly_fig.add_trace(
@@ -101,6 +100,7 @@ def demand_analysis_page():
                     x=x_hours,
                     y=hourly_ser.values,
                     mode="lines",
+                    line=dict(color=graph_utils.COLORS[i % len(graph_utils.COLORS)]),
                     name=label,
                 )
             )
@@ -109,7 +109,7 @@ def demand_analysis_page():
     if freq_label == "Weekly":
         # Normalize each selected week to an "hour of week" axis: 0..167
         x_hours = list(range(24 * 7))
-        for p in selected_periods:
+        for i, p in enumerate(selected_periods):
             start, end = p.split(" - ")
             hourly_ser = hourly_series_for_week(demand_series, start, end)
             hourly_fig.add_trace(
@@ -117,6 +117,7 @@ def demand_analysis_page():
                     x=x_hours[:len(hourly_ser)],
                     y=hourly_ser.values,
                     mode="lines",
+                    line=dict(color=graph_utils.COLORS[i % len(graph_utils.COLORS)]),
                     name=p,
                     hovertemplate='(%{x:.1f}, %{y:.1f})<br>%{fullData.name}<extra></extra>'
 
@@ -129,8 +130,7 @@ def demand_analysis_page():
     elif freq_label == "Monthly":
         # Normalize each selected month to an "hour of month" axis: 0..(31*24-1)
         x_hours = list(range(31 * 24))
-
-        for p in selected_periods:
+        for i, p in enumerate(selected_periods):
             period = pd.Period(p, freq="M")
             ts = period.to_timestamp()
             label = ts.strftime("%b %Y")  # e.g. "Jan 2023"
@@ -144,6 +144,7 @@ def demand_analysis_page():
                     x=x_hours[:len(hourly_ser)],
                     y=hourly_ser.values,
                     mode="lines",
+                    line=dict(color=graph_utils.COLORS[i % len(graph_utils.COLORS)]),
                     name=label,
                     hovertemplate='(%{x:.1f}, %{y:.1f})<br>%{fullData.name}<extra></extra>'
                 )
@@ -155,7 +156,7 @@ def demand_analysis_page():
     elif freq_label == "Annually":
         # Normalize each selected year to an "hour of year" axis: 0..(365*24-1)
         x_hours = list(range(365 * 24))
-        for p in selected_periods:
+        for i, p in enumerate(selected_periods):
             year = int(p)
             label = str(year)
             hourly_ser = hourly_series_for_year_aligned(demand_series, year)
@@ -166,6 +167,7 @@ def demand_analysis_page():
                     x=x_hours[:len(hourly_ser)],
                     y=hourly_ser.values,
                     mode="lines",
+                    line=dict(color=graph_utils.COLORS[i % len(graph_utils.COLORS)]),
                     name=label,
                     hovertemplate='(%{x:.1f}, %{y:.1f})<br>%{fullData.name}<extra></extra>'
                 )

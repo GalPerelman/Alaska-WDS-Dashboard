@@ -73,7 +73,7 @@ def pump_curves_page():
         if sub_all.empty:
             continue
 
-        color = graph_utils.color_sequence[i]
+        color = graph_utils.COLORS[i]
         llegend_label = f"cluster-{legend_items[int(cl)]}"  # legend group name
 
         # left: pump curve
