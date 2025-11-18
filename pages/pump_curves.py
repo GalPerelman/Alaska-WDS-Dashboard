@@ -47,8 +47,10 @@ def pump_curves_page():
     df["Date"] = pd.to_datetime(df["Date"])
     df = df.sort_values(["Date", "cluster"])
 
-    resample_hr = st.number_input(r"$\textsf{\Large Aggregation Resolution (Hours):}$",
-                                  min_value=1, max_value=24, value=2, step=1, width=300)
+    # this allows the user to select aggregation resolution, removed for now
+    # resample_hr = st.number_input(r"$\textsf{\Large Aggregation Resolution (Hours):}$",
+    #                               min_value=1, max_value=24, value=2, step=1, width=300)
+    resample_hr = 1
     df.index = df['Date']
     df = df.resample(f'{resample_hr}h').first()
     st.text(" ")
