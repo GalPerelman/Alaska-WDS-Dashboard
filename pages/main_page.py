@@ -5,7 +5,8 @@ def main_page():
     st.title("About")
 
     st.text("This dashboard uses water system key component sensor data to establish demand patterns, derive pump curves, determine unmeasured water losses, and assess sustainability metrics. It is set-up to facilitate decision making by allowing operators to assess different operation scenarios. ")
-
+    st.markdown("All the raw data and sensor locations are available at the [ANTHC Remote Monitoring website]"
+                "(https://anthc.bmon.org/map/?select_org=0)")
     st.markdown("Paper (to update later) [link](%s)" %"https://sites.utexas.edu/selalina/")
     st.text(" ")
 
