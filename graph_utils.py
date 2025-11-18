@@ -33,7 +33,6 @@ def plot_time_series(
         same_color=False,
         range_slider=False
 ):
-
     data.index = pd.to_datetime(data.index)  # ensure index is datetime-like
 
     if data_col_names is not None:
@@ -44,12 +43,12 @@ def plot_time_series(
     if same_color:
         plot_colors = [COLORS[0] for _ in cols]
     else:
-        plot_colors = COLORS[:len(cols)+1]
+        plot_colors = COLORS[:len(cols) + 1]
 
     if len(cols) > 1:
-        fig = make_subplots(rows=len(cols), cols=1, shared_xaxes=sharex, vertical_spacing=0.15)
+        fig = make_subplots(rows=len(cols), cols=1, shared_xaxes=sharex, vertical_spacing=vertical_spacing)
         for i, col in enumerate(cols, start=1):
-            fig.add_trace(go.Scatter(x=data.index, y=data[col], name=col, line=dict(color=plot_colors[i]), **line_kw),
+            fig.add_trace(go.Scatter(x=data.index, y=data[col], name=col, line=dict(color=plot_colors[i-1]), **line_kw),
                           row=i, col=1)
             fig.update_yaxes(title=col, secondary_y=False, row=i, col=1)
         fig.update_layout(height=height_single * len(cols))
@@ -57,11 +56,11 @@ def plot_time_series(
         #                  row=len(cols), col=1, rangeslider_thickness=0.1)
 
     else:
-        fig = make_subplots(rows=1, cols=1, shared_xaxes=sharex, vertical_spacing=0.1)
+        fig = make_subplots(rows=1, cols=1, shared_xaxes=sharex, vertical_spacing=vertical_spacing)
         for i, col in enumerate(cols):
             fig.add_trace(go.Scatter(x=data.index, y=data[col], zorder=5, line=dict(color=plot_colors[0]), **line_kw))
             fig.update_yaxes(title=col, secondary_y=False, row=1, col=1)
-        fig.update_layout(height=height_single*2.5)
+        fig.update_layout(height=height_single * 2.5)
         if range_slider:
             fig.update_xaxes(rangeslider={'visible': True, "bordercolor": "black", "borderwidth": 1},
                              row=len(cols), col=1, rangeslider_thickness=0.18)
@@ -72,5 +71,3 @@ def plot_time_series(
     fig.update_xaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
     fig.update_yaxes(title_font=dict(size=utils.GRAPHS_FONT_SIZE))
     return fig
-
-

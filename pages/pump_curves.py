@@ -68,7 +68,7 @@ def pump_curves_page():
         sub_all = df[df["cluster"] == cl]  # for legend item spanning full series
         sub_view = dfv[dfv["cluster"] == cl]  # respects selected date window
 
-        ts_sub_view = sub_view.resample('W').first()
+        ts_sub_view = sub_view.resample('ME').first()
 
         if sub_all.empty:
             continue
@@ -81,7 +81,7 @@ def pump_curves_page():
             go.Scatter(
                 x=sub_view["flow_gpm"], y=sub_view["pump_head_ft"],
                 mode="markers",
-                marker=dict(color=color, size=5, line=dict(width=0.2, color="DarkSlateGrey")),
+                marker=dict(color=color, size=6, line=dict(width=0.2, color="DarkSlateGrey")),
                 name=f"Cluster {legend_items[int(cl)]}",
                 legendgroup=llegend_label,
                 showlegend=False
@@ -94,7 +94,7 @@ def pump_curves_page():
             go.Scatter(
                 x=ts_sub_view["Date"], y=ts_sub_view["pressure_psi"],
                 mode="markers",
-                marker=dict(color=color, size=5, line=dict(width=0.2, color="DarkSlateGrey")),
+                marker=dict(color=color, size=6, line=dict(width=0.2, color="DarkSlateGrey")),
                 name=f"Cluster {legend_items[int(cl)]}",
                 legendgroup=llegend_label,
                 showlegend=True,

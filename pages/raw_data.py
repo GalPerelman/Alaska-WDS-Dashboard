@@ -41,8 +41,8 @@ def raw_data_page():
 
     fig = graph_utils.plot_time_series(
         data=filtered_data,
-        height_single=350,
-        vertical_spacing=0.1,
+        height_single=300,
+        vertical_spacing=0.08,
         line_kw=dict(line_width=1.6))
 
     # customized the y limits of the last plot - artifically ignore outlier
