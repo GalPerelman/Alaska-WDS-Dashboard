@@ -52,7 +52,9 @@ def pump_curves_page():
     #                               min_value=1, max_value=24, value=2, step=1, width=300)
     resample_hr = 1
     df.index = df['Date']
+
     df = df.resample(f'{resample_hr}h').first()
+    df = df.dropna(subset=["cluster"])  # the aggregation may produce NaNs
     st.text(" ")
 
     min_d, max_d = df["Date"].min().date(), df["Date"].max().date()
