@@ -29,6 +29,7 @@ def demand_analysis_page():
         "Daily": "D",
         "Weekly": "W",
         "Monthly": "MS",
+        "Annually": "YS",
     }
     agg_map = {
         "Average": "mean",
@@ -79,10 +80,15 @@ def demand_analysis_page():
                 how=agg_map[agg_for_plot],
             )
         elif freq_label == "Annually":
-            label = str(int(p))
-            aligned[label] = series_for_monthly_by_year(data[DEMAND_COL].astype(float), int(p), how=agg_map[agg_for_plot])
+            year = int(p)
+            label = str(year)
+            aligned[label] = series_for_monthly_by_year(
+                data[DEMAND_COL].astype(float),
+                year=year,
+                how=agg_map[agg_for_plot],
+            )
 
-    if freq_label in ("Weekly", "Monthly") and selected_periods and display_hourly:
+    if selected_periods and display_hourly:
         col1, spacer, col2 = st.columns([8, 1, 10])
         with col1:
             st.text(" ")
@@ -145,6 +151,25 @@ def demand_analysis_page():
                     )
 
                 hourly_fig.update_xaxes(title="Hour of month (0–744)")
+
+            elif freq_label == "Annually":
+                # Normalize each selected year to an "hour of year" axis: 0..(365*24-1)
+                x_hours = list(range(365 * 24))
+                for p in selected_periods:
+                    year = int(p)
+                    label = str(year)
+                    hourly_ser = hourly_series_for_year_aligned(demand_series, year)
+                    if hourly_ser.empty:
+                        continue
+                    hourly_fig.add_trace(
+                        go.Scatter(
+                            x=x_hours[:len(hourly_ser)],
+                            y=hourly_ser.values,
+                            mode="lines",
+                            name=label,
+                        )
+                    )
+                hourly_fig.update_xaxes(title="Hour of year (0–8759)")
 
             hourly_fig.update_layout(
                 yaxis_title="Consumption (GPM)",
@@ -296,15 +321,15 @@ def build_period_options(idx: pd.DatetimeIndex, mode: str):
         return options
 
     if mode == "Monthly":
-        # Compare months within a YEAR → user picks one or more YEARS
-        # years = pd.Index(idx.year.unique()).sort_values()
-        # options = [f"{int(y)}" for y in years]
-        # return options
-
         # unique month-year periods present in the data
         months = idx.to_period("M").unique()
         # store as YYYY-MM; we can pretty-print later as "Jan 2023"
         options = [m.strftime("%Y-%m") for m in months]
+        return options
+
+    if mode == "Annually":
+        years = pd.Index(idx.year.unique()).sort_values()
+        options = [f"{int(y)}" for y in years]
         return options
 
     return []
@@ -492,6 +517,32 @@ def hourly_series_for_month_aligned(s: pd.Series, year: int, month: int) -> pd.S
     expected_len = 31 * 24
     ss = ss.iloc[:expected_len]          # just in case
     ss.index = pd.RangeIndex(len(ss))    # 0..len-1
+
+    if len(ss) < expected_len:
+        ss = ss.reindex(pd.RangeIndex(expected_len))
+
+    return ss
+
+
+def hourly_series_for_year_aligned(s: pd.Series, year: int) -> pd.Series:
+    """
+    Return a 1D hourly series for a given year,
+    aligned to a 0..(365*24-1) 'hour of year' index.
+
+    For leap years, the extra day is truncated.
+    """
+    start = pd.Timestamp(year=year, month=1, day=1)
+    end = pd.Timestamp(year=year + 1, month=1, day=1) - pd.Timedelta(hours=1)
+
+    ss = s.loc[(s.index >= start) & (s.index <= end)]
+    if ss.empty:
+        return pd.Series(index=pd.RangeIndex(365 * 24), dtype=float)
+
+    ss = ss.resample("H").mean().sort_index()
+
+    expected_len = 365 * 24
+    ss = ss.iloc[:expected_len]        # truncate if leap year or extra data
+    ss.index = pd.RangeIndex(len(ss))  # 0..len-1
 
     if len(ss) < expected_len:
         ss = ss.reindex(pd.RangeIndex(expected_len))
