@@ -68,6 +68,17 @@ def demand_analysis_page():
             label = f"{pd.Timestamp(start).date()} → {pd.Timestamp(end).date()}"
             aligned[label] = series_for_weekly(data[DEMAND_COL].astype(float), start, end, how=agg_map[agg_for_plot])
         elif freq_label == "Monthly":
+            # p is "YYYY-MM"
+            period = pd.Period(p, freq="M")
+            ts = period.to_timestamp()
+            label = ts.strftime("%b %Y")  # e.g. "Jan 2023"
+            aligned[label] = series_for_monthly(
+                data[DEMAND_COL].astype(float),
+                year=ts.year,
+                month=ts.month,
+                how=agg_map[agg_for_plot],
+            )
+        elif freq_label == "Annually":
             label = str(int(p))
             aligned[label] = series_for_monthly_by_year(data[DEMAND_COL].astype(float), int(p), how=agg_map[agg_for_plot])
 
@@ -112,22 +123,28 @@ def demand_analysis_page():
                 hourly_fig.update_xaxes(title="Hour of week (0–167)")
 
             elif freq_label == "Monthly":
-                # Here "Monthly" mode means: compare years.
-                # Show each selected year as its own hourly time series.
-                for label in selected_periods:
-                    year = int(label)
-                    hourly_ser = hourly_series_for_year(demand_series, year)
+                # Normalize each selected month to an "hour of month" axis: 0..(31*24-1)
+                x_hours = list(range(31 * 24))
+
+                for p in selected_periods:
+                    period = pd.Period(p, freq="M")
+                    ts = period.to_timestamp()
+                    label = ts.strftime("%b %Y")  # e.g. "Jan 2023"
+
+                    hourly_ser = hourly_series_for_month_aligned(demand_series, ts.year, ts.month)
                     if hourly_ser.empty:
                         continue
+
                     hourly_fig.add_trace(
                         go.Scatter(
-                            x=hourly_ser.index,
+                            x=x_hours[:len(hourly_ser)],
                             y=hourly_ser.values,
                             mode="lines",
-                            name=str(year),
+                            name=label,
                         )
                     )
-                hourly_fig.update_xaxes(title="Time (hourly)")
+
+                hourly_fig.update_xaxes(title="Hour of month (0–744)")
 
             hourly_fig.update_layout(
                 yaxis_title="Consumption (GPM)",
@@ -280,8 +297,14 @@ def build_period_options(idx: pd.DatetimeIndex, mode: str):
 
     if mode == "Monthly":
         # Compare months within a YEAR → user picks one or more YEARS
-        years = pd.Index(idx.year.unique()).sort_values()
-        options = [f"{int(y)}" for y in years]
+        # years = pd.Index(idx.year.unique()).sort_values()
+        # options = [f"{int(y)}" for y in years]
+        # return options
+
+        # unique month-year periods present in the data
+        months = idx.to_period("M").unique()
+        # store as YYYY-MM; we can pretty-print later as "Jan 2023"
+        options = [m.strftime("%Y-%m") for m in months]
         return options
 
     return []
@@ -292,11 +315,13 @@ def get_x_domain(mode: str):
         # hours 0..23
         return list(range(24)), "hour"
     if mode == "Weekly":
-        # Monday..Sunday mapped to 0..6
+        # Monday - Sunday mapped to 0..6
         days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         return days, "dow"  # day-of-week label
     if mode == "Monthly":
-        # Months of the year Jan..Dec
+        return list(range(1, 32)), "dom"
+    if mode == "Annually":
+        # Months of the year Jan - Dec
         months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
         return months, "month"
     return [], ""
@@ -344,6 +369,36 @@ def series_for_weekly(s: pd.Series, start_date, end_date, how="sum"):
     return out.reindex(dow_names, fill_value=np.nan)
 
 
+def series_for_monthly(s: pd.Series, year: int, month: int, how="sum"):
+    """
+    Aggregate a given month-year into a day-of-month profile.
+
+    Returns a Series indexed by day-of-month 1..31.
+    """
+    mask = (s.index.year == year) & (s.index.month == month)
+    ss = s.loc[mask]
+    days = range(1, 32)
+    if ss.empty:
+        return pd.Series(index=days, dtype=float)
+
+    grouped = ss.groupby(ss.index.day)
+    if how == "sum":
+        out = grouped.sum()
+    elif how == "mean":
+        out = grouped.mean()
+    elif how == "max":
+        out = grouped.max()
+    elif how == "min":
+        out = grouped.min()
+    elif how == "median":
+        out = grouped.median()
+    else:
+        raise ValueError(f"Unknown aggregation: {how}")
+
+    # ensure we always have 1..31 for consistent x_domain
+    return out.reindex(days, fill_value=np.nan)
+
+
 def series_for_monthly_by_year(s: pd.Series, year: int, how="sum"):
     ss = s.loc[(s.index.year == int(year))]
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -379,7 +434,7 @@ def hourly_series_for_week(s: pd.Series, start_date, end_date) -> pd.Series:
         return pd.Series(index=pd.RangeIndex(24 * 7), dtype=float)
 
     # ensure hourly frequency
-    ss = ss.resample("H").mean()
+    ss = ss.resample("h").mean()
 
     expected_len = 24 * 7
     ss = ss.iloc[:expected_len]  # just in case there is extra data
@@ -393,6 +448,13 @@ def hourly_series_for_week(s: pd.Series, start_date, end_date) -> pd.Series:
     return ss
 
 
+def hourly_series_for_month(s: pd.Series, year: int, month: int) -> pd.Series:
+    ss = s[(s.index.year == year) & (s.index.month == month)]
+    if ss.empty:
+        return pd.Series(dtype=float)
+    return ss.resample("h").mean()
+
+
 def hourly_series_for_year(s: pd.Series, year: int) -> pd.Series:
     """
     Return an hourly series for a given year, indexed by the actual timestamps.
@@ -401,5 +463,37 @@ def hourly_series_for_year(s: pd.Series, year: int) -> pd.Series:
     if ss.empty:
         return pd.Series(dtype=float)
 
-    ss = ss.resample("H").mean()
+    ss = ss.resample("h").mean()
+    return ss
+
+
+def hourly_series_for_month_aligned(s: pd.Series, year: int, month: int) -> pd.Series:
+    """
+    Return a 1D hourly series for a given month-year,
+    aligned to a 0..(31*24-1) 'hour of month' index.
+    """
+    start = pd.Timestamp(year=year, month=month, day=1)
+
+    # first day of the next month
+    if month == 12:
+        next_month = pd.Timestamp(year=year + 1, month=1, day=1)
+    else:
+        next_month = pd.Timestamp(year=year, month=month + 1, day=1)
+
+    # include full last day up to 23:00
+    end = next_month - pd.Timedelta(hours=1)
+
+    ss = s.loc[(s.index >= start) & (s.index <= end)]
+    if ss.empty:
+        return pd.Series(index=pd.RangeIndex(31 * 24), dtype=float)
+
+    ss = ss.resample("h").mean().sort_index()
+
+    expected_len = 31 * 24
+    ss = ss.iloc[:expected_len]          # just in case
+    ss.index = pd.RangeIndex(len(ss))    # 0..len-1
+
+    if len(ss) < expected_len:
+        ss = ss.reindex(pd.RangeIndex(expected_len))
+
     return ss
