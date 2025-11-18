@@ -39,3 +39,9 @@ def custom_button(png_path: str, label: str, button_id: str):
         </a>
     """
     st.markdown(button_html, unsafe_allow_html=True)
+
+
+def resize_to_height(img, target_h):
+    w, h = img.size
+    new_w = int(w * target_h / h)
+    return img.resize((new_w, target_h))

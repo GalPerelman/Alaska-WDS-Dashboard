@@ -3,7 +3,7 @@ import streamlit as st
 from PIL import Image
 
 import graph_utils
-
+import utils
 
 def raw_data_page():
     st.title("Raw Data")
@@ -54,20 +54,15 @@ def raw_data_page():
     st.text(" ")
     st.divider()
 
-    def resize_to_height(img, target_h):
-        w, h = img.size
-        new_w = int(w * target_h / h)
-        return img.resize((new_w, target_h))
-
     target_height = 250
     img1 = Image.open("resources/1_treated_flow_sensor.jpg")
     img2 = Image.open("resources/2_demand_sensor.jpg")
     img3 = Image.open("resources/3_tank_level_sensor.jpg")
     img4 = Image.open("resources/4_pressure_sensor.jpg")
-    img1_resized = resize_to_height(img1, target_height)
-    img2_resized = resize_to_height(img2, target_height)
-    img3_resized = resize_to_height(img3, target_height)
-    img4_resized = resize_to_height(img4, target_height)
+    img1_resized = utils.resize_to_height(img1, target_height)
+    img2_resized = utils.resize_to_height(img2, target_height)
+    img3_resized = utils.resize_to_height(img3, target_height)
+    img4_resized = utils.resize_to_height(img4, target_height)
 
     col1, col2, col3, col4 = st.columns(4)
     with col1:
