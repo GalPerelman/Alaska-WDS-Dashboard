@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from PIL import Image
 
 import graph_utils
 import utils
@@ -146,3 +147,19 @@ def pump_curves_page():
             st.metric("Required Speed Cluster", legend_items[int(cluster)])
         except Exception as e:
             st.error(f"Error in prediction: {e}")
+    st.text(" ")
+    st.text(" ")
+    st.text(" ")
+    st.text(" ")
+
+    target_height = 400
+    img1 = Image.open("resources/5_pumps.jpg")
+    img2 = Image.open("resources/6_pump_speed_change.jpg")
+    img1_resized = utils.resize_to_height(img1, target_height)
+    img2_resized = utils.resize_to_height(img2, target_height)
+
+    col1, col2, col3, col4 = st.columns(4)
+    with col2:
+        st.image(img1_resized, caption="System Pumps")
+    with col3:
+        st.image(img2_resized, caption="Speed Control Panel")
