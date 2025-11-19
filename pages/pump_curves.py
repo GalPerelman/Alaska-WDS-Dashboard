@@ -147,7 +147,7 @@ def pump_curves_page():
 
     st.text("Enter the system flow rate and target system pressure to get an operating pump curve")
 
-    col1, col2, col3, col4, spacer = st.columns([1, 1, 1, 1, 0.2])
+    col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
     with col1:
         q = st.number_input("Flow (GPM)", min_value=0.0, max_value=65.0, value=50.0, key="q_input", step=0.1)
     with col2:

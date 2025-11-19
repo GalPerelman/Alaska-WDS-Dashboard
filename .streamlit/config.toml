@@ -1,6 +1,6 @@
 [theme]
 base="dark"
-baseFontSize=20
+baseFontSize=24
 
 [server]
 fileWatcherType       = "poll"          # gentler file-watcher

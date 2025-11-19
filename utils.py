@@ -24,7 +24,7 @@ def custom_button(png_path: str, label: str, button_id: str):
             border: white 2px solid;
             border-radius: 8px;
             text-decoration: none;
-            font-size: 20px;
+            font-size: 24px;
             cursor: pointer;
             text-align: center;
 
