@@ -136,8 +136,9 @@ def pump_curves_page():
                            'cluster': [7, 8, 9, 10, 11, 12, 13, 14, 15]})
 
     def hard_coded_curves_pred(q, p, l):
+        target_pressure_head = p * 2.31  # psi to ft
         curves['estimated_head'] = curves['a'] * (q ** 2) + curves['b'] * q + curves['c']
-        calculated_required_head = p - l
+        calculated_required_head = target_pressure_head - l
         curves['adjusted_head'] = abs(curves['estimated_head'] - calculated_required_head)
         min_index = curves['adjusted_head'].idxmin()
         closest_curve = curves.loc[min_index, 'cluster']
@@ -148,11 +149,12 @@ def pump_curves_page():
 
     col1, col2, col3, col4, spacer = st.columns([1, 1, 1, 1, 0.2])
     with col1:
-        q = st.number_input("Q (GPM)", min_value=0.0, max_value=65.0, value=45.0, key="q_input")
+        q = st.number_input("Flow (GPM)", min_value=0.0, max_value=65.0, value=50.0, key="q_input", step=0.1)
     with col2:
-        p = st.number_input("System Pressure (PSI)", min_value=0.0, max_value=100.0, value=60.0, key="p_input")
+        p = st.number_input("Desired System Pressure (PSI)", min_value=0.0, max_value=100.0, value=32.0, key="p_input",
+                            step=0.1)
     with col3:
-        l = st.number_input("Tank Level (ft)", min_value=0.0, max_value=22.0, value=8.0, key="l_input")
+        l = st.number_input("Tank Level (ft)", min_value=0.0, max_value=22.0, value=20.0, key="l_input", step=0.1)
     with col4:
         try:
             cluster = hard_coded_curves_pred(q, p, l)
