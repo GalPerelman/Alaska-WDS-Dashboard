@@ -17,6 +17,16 @@ pg_pumps = st.Page(pump_curves_page, title="Pump Curves")
 pg_water_losses = st.Page(water_losses_page, title="Water Losses")
 pg_storage = st.Page(storage_page, title="Storage")
 
+# force font size also if theme is changed by users
+st.markdown("""
+    <style>
+    html {
+        font-size: 24px !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
 nav = st.navigation([pg_main, pg_raw, pg_dem_analysis, pg_pumps, pg_water_losses, storage_page])
 
 # Track current page in session_state
