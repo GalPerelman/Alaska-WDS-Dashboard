@@ -63,7 +63,8 @@ def pump_curves_page():
         sub_all = df[df["cluster"] == cl]  # for legend item spanning full series
         sub_view = dfv[dfv["cluster"] == cl]  # respects selected date window
 
-        ts_sub_view = sub_view.resample('ME').first()
+        ts_sub_view = dfv.resample('ME').first()  # respects selected date window
+        ts_sub_view = ts_sub_view[ts_sub_view["cluster"] == cl]
 
         if sub_all.empty:
             continue
