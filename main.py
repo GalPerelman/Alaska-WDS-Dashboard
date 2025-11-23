@@ -6,13 +6,13 @@ from pages.raw_data import raw_data_page
 from pages.pump_curves import pump_curves_page
 from pages.water_losses import water_losses_page
 from pages.storage import storage_page
-from pages.demand_analysis import demand_analysis_page
+from pages.system_flow import system_flow_page
 
 st.set_page_config(page_title="Alaska Dashboard", layout="wide")
 
 pg_main = st.Page(main_page, title="Home")
 pg_raw = st.Page(raw_data_page, title="Raw Data")
-pg_dem_analysis = st.Page(demand_analysis_page, title="Demands")
+pg_sys_flow = st.Page(system_flow_page, title="System Flow")
 pg_pumps = st.Page(pump_curves_page, title="Pump Curves")
 pg_water_losses = st.Page(water_losses_page, title="Water Losses")
 pg_storage = st.Page(storage_page, title="Storage")
@@ -27,7 +27,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 
-nav = st.navigation([pg_main, pg_raw, pg_dem_analysis, pg_pumps, pg_water_losses, storage_page])
+nav = st.navigation([pg_main, pg_raw, pg_sys_flow, pg_pumps, pg_water_losses, storage_page])
 
 # Track current page in session_state
 if "current_page" not in st.session_state:
@@ -43,9 +43,9 @@ with col1:
     if clicked == "raw":
         st.switch_page(pg_raw)
 with col2:
-    utils.custom_button("resources/icon_demand.png", "Demands", button_id="demand")
-    if clicked == "demand":
-        st.switch_page(pg_dem_analysis)
+    utils.custom_button("resources/icon_system_flow.png", "System Flow", button_id="system_flow")
+    if clicked == "system_flow":
+        st.switch_page(pg_sys_flow)
 with col3:
     utils.custom_button("resources/icon_pumps.png", "Pumps Curves", button_id="pumps")
     if clicked == "pumps":

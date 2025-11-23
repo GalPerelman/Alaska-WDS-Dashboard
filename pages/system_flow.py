@@ -8,7 +8,7 @@ import graph_utils
 import utils
 
 
-def demand_analysis_page():
+def system_flow_page():
     st.markdown("""
         <style>
         .stHeadingContainer {
@@ -17,7 +17,7 @@ def demand_analysis_page():
         </style>
         """, unsafe_allow_html=True)
 
-    st.title("Demand Analysis")
+    st.title("System Flow")
     DEMAND_COL = "Master Meter Flow Rate, GPM"
 
     data = pd.read_csv("data/raw_timeseries_data.csv", index_col=0)
@@ -89,12 +89,12 @@ def demand_analysis_page():
     st.subheader("Hourly profiles", )
     aligned = {}
     hourly_fig = go.Figure()
-    demand_series = data[DEMAND_COL].astype(float)
+    sys_flow_series = data[DEMAND_COL].astype(float)
     if freq_label == "Daily":
         x_hours = list(range(24))
         for i, p in enumerate(selected_periods):
             label = pd.Timestamp(p).strftime("%Y-%m-%d")
-            hourly_ser = series_for_daily(demand_series, p, how="mean")
+            hourly_ser = series_for_daily(sys_flow_series, p, how="mean")
             hourly_fig.add_trace(
                 go.Scatter(
                     x=x_hours,
@@ -111,7 +111,7 @@ def demand_analysis_page():
         x_hours = list(range(24 * 7))
         for i, p in enumerate(selected_periods):
             start, end = p.split(" - ")
-            hourly_ser = hourly_series_for_week(demand_series, start, end)
+            hourly_ser = hourly_series_for_week(sys_flow_series, start, end)
             hourly_fig.add_trace(
                 go.Scatter(
                     x=x_hours[:len(hourly_ser)],
@@ -135,7 +135,7 @@ def demand_analysis_page():
             ts = period.to_timestamp()
             label = ts.strftime("%b %Y")  # e.g. "Jan 2023"
 
-            hourly_ser = hourly_series_for_month_aligned(demand_series, ts.year, ts.month)
+            hourly_ser = hourly_series_for_month_aligned(sys_flow_series, ts.year, ts.month)
             if hourly_ser.empty:
                 continue
 
@@ -159,7 +159,7 @@ def demand_analysis_page():
         for i, p in enumerate(selected_periods):
             year = int(p)
             label = str(year)
-            hourly_ser = hourly_series_for_year_aligned(demand_series, year)
+            hourly_ser = hourly_series_for_year_aligned(sys_flow_series, year)
             if hourly_ser.empty:
                 continue
             hourly_fig.add_trace(
