@@ -90,7 +90,7 @@ def pump_curves_page():
             go.Scatter(
                 x=ts_sub_view["Date"], y=ts_sub_view["pressure_psi"],
                 mode="markers",
-                marker=dict(color=color, size=6, line=dict(width=0.2, color="DarkSlateGrey")),
+                marker=dict(color=color, size=8, line=dict(width=0.2, color="DarkSlateGrey")),
                 name=f"Cluster {legend_items[int(cl)]}",
                 legendgroup=llegend_label,
                 showlegend=True,
