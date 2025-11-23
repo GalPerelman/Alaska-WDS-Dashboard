@@ -269,7 +269,7 @@ def demand_analysis_page():
     for i, year in enumerate(pivot_df.columns):
         months = pivot_df.index
         month_names = [calendar.month_name[m] for m in months]
-        values = pivot_df[year].values
+        values = pivot_df[year].values / 1000000  # in millions of gallons
         color = graph_utils.BAR_COLORS[i]
 
         hover = (
@@ -298,7 +298,7 @@ def demand_analysis_page():
     # Update layout
     fig.update_layout(
         barmode="group",  # side-by-side grouped bars
-        yaxis_title="Monthly Consumption<br>(Gallons)",
+        yaxis_title="Monthly Consumption<br>(MG)",
         yaxis=dict(tickformat=",.0f")
     )
     fig.update_xaxes(tickfont=dict(size=utils.GRAPHS_FONT_SIZE))
